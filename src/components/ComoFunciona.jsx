@@ -3,23 +3,23 @@ import { Section } from './Section.jsx'
 const PHASES = [
   [
     'Apresentação dos candidatos',
-    'As equipas apresentam-se com um vídeo de até 1 minuto e uma foto da equipa: equipa, município que pretendem representar, projecto e propósito.',
+    'Cada equipa envia um vídeo de até 1 minuto e uma foto da equipa: quem são, o município que pretendem representar, o projecto e o porquê.',
   ],
   [
     'Identificação e selecção de talentos',
-    'As candidaturas são apreciadas segundo critérios oficiais, para identificar equipas e projectos com potencial de integrar a plataforma.',
+    'As candidaturas são apreciadas segundo critérios oficiais. Equipas e projectos com potencial dão o salto e entram na plataforma.',
   ],
   [
     'Desenvolvimento das equipas e projectos',
-    'As equipas seleccionadas aperfeiçoam propostas e participam nas actividades de desenvolvimento da edição — não só a ideia, mas a execução.',
+    'Quem é seleccionado aperfeiçoa a proposta e participa nas actividades de desenvolvimento da edição — a ideia conta, a execução conta mais.',
   ],
   [
     'Apresentação, debate e competição',
-    'Os projectos são apresentados ao público, sujeitos a perguntas e debate. As equipas defendem as suas propostas perante a comunidade.',
+    'Os projectos sobem ao palco: apresentação ao público, perguntas e debate. As equipas defendem as suas propostas perante a comunidade.',
   ],
   [
     'Reconhecimento dos talentos',
-    'Categorias de distinção, prémios e votação serão divulgados oficialmente. Mérito transformado em reconhecimento e exposição.',
+    'Categorias de distinção, prémios e votação divulgados oficialmente. Mérito transformado em reconhecimento e exposição.',
   ],
 ]
 
@@ -41,9 +41,6 @@ export default function ComoFunciona() {
             <div className="flex items-baseline gap-3 md:col-span-3">
               <span className="font-mono text-xl font-medium text-brand-deep sm:text-2xl">
                 {String(index + 1).padStart(2, '0')}
-              </span>
-              <span className="font-mono text-[10px] tracking-[0.12em] text-ink/40 uppercase">
-                Fase {index + 1}
               </span>
             </div>
             <h3 className="text-lg font-semibold md:col-span-4">{title}</h3>
