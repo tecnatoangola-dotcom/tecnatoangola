@@ -1,0 +1,45 @@
+import Areas from '../components/Areas.jsx'
+import Candidatura from '../components/Candidatura.jsx'
+import ComoFunciona from '../components/ComoFunciona.jsx'
+import Cta from '../components/Cta.jsx'
+import Faq from '../components/Faq.jsx'
+import Gallery from '../components/Gallery.jsx'
+import Hero from '../components/Hero.jsx'
+import Impacto from '../components/Impacto.jsx'
+import Marquee from '../components/Marquee.jsx'
+import Participar from '../components/Participar.jsx'
+import Projecto from '../components/Projecto.jsx'
+import ParceirosMarquee from '../components/ParceirosMarquee.jsx'
+
+export default function Home() {
+  return (
+    <>
+      <Hero />
+      <div className="mt-2 sm:mt-4">
+        <Gallery />
+      </div>
+      <Marquee />
+      <Projecto />
+      <section id="parceiros" className="scroll-mt-16 border-t border-line bg-paper">
+        <div className="mx-auto max-w-[1440px] border-x border-line px-5 py-16 sm:px-8 sm:py-20 lg:px-12">
+          <div className="grid gap-6 lg:grid-cols-12">
+            <p className="section-label text-brand-deep lg:col-span-2">03 / Parceiros</p>
+            <div className="lg:col-span-7">
+              <h2 className="text-4xl leading-[0.95] font-semibold tracking-[-0.055em] sm:text-5xl">Quem caminha <em className="editorial-serif font-normal">connosco.</em></h2>
+              <p className="mt-5 max-w-xl text-base leading-relaxed text-ink/70">Ferramentas e equipas que tornam o TECNATO possível — da infraestrutura à inteligência que potencia a plataforma.</p>
+            </div>
+            <p className="font-mono text-[10px] leading-relaxed tracking-[0.12em] uppercase text-ink/45 lg:col-span-3 lg:self-end lg:text-right">Construído em Angola<br />com parceiros globais</p>
+          </div>
+          <div className="mt-10"><ParceirosMarquee /></div>
+        </div>
+      </section>
+      <Areas />
+      <ComoFunciona />
+      <Participar />
+      <Impacto />
+      <Candidatura />
+      <Faq />
+      <Cta />
+    </>
+  )
+}
