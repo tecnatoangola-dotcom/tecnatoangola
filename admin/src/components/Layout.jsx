@@ -37,7 +37,7 @@ function NavLinks({ onNavigate, variant }) {
 function Brand({ small }) {
   return (
     <div className={`flex items-center gap-3 ${small ? 'px-5 py-4' : 'px-5 py-4 lg:px-6 lg:py-7'}`}>
-      <img src="/logo.png" alt="TECNATO" className="h-9 w-auto" />
+      <img src="/logo.png" alt="TECNATO" className="h-9 w-auto brightness-0 invert" />
       <div>
         <p className="font-mono text-[11px] font-medium tracking-[0.18em]">ADMIN</p>
         <p className="mt-0.5 text-[11px] text-white/45">Centro de operações</p>

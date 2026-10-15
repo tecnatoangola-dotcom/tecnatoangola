@@ -32,9 +32,11 @@ export default function Footer() {
       <div className="mx-auto max-w-6xl px-5 py-14 sm:px-8 sm:py-16">
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <div className="inline-flex rounded-xl bg-white px-4 py-3">
-              <img src="/logo/TECNATO.png" alt="TECNATO" className="h-12 w-auto" />
-            </div>
+            <img
+              src="/logo/TECNATO.png"
+              alt="TECNATO"
+              className="h-12 w-auto brightness-0 invert"
+            />
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/65">
               O talento merece ser visto. As ideias merecem ser ouvidas. O potencial merece uma
               oportunidade.
