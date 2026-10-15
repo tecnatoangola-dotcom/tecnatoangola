@@ -388,6 +388,12 @@ export default function CandidaturaPage() {
         Apresenta a tua equipa e o teu projecto.
       </h1>
       <p className="mt-4 text-base leading-relaxed text-ink/70">
+        O <strong>TECNATO</strong> é uma plataforma de identificação, valorização e visibilidade
+        de talentos, projectos e iniciativas nas áreas da Gestão, Administração, Ciência,
+        Inovação, Empreendedorismo, Tecnologia e outras áreas do conhecimento e da criatividade
+        humana.
+      </p>
+      <p className="mt-3 text-base leading-relaxed text-ink/70">
         Escolhe como queres enviar o <strong>vídeo</strong> (até {MAX_DURATION_SECONDS / 60} min) e
         a <strong>foto da equipa</strong> — os dois são obrigatórios. Na plataforma, os ficheiros
         ficam guardados na nossa nuvem e recebes um código de referência no fim.
