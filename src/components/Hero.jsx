@@ -21,7 +21,7 @@ export default function Hero() {
               A luz para os <em className="editorial-serif font-normal tracking-[-0.04em]">génios</em> da banda.
             </h1>
             <p className="mt-8 max-w-xl text-base leading-relaxed text-ink/70 sm:text-lg">
-              O <strong className="font-semibold text-ink">TECNATO</strong> encontra, prepara e dá visibilidade a talentos, projectos e iniciativas que movem Angola.
+              O <strong className="font-semibold text-ink">TECNATO</strong> é uma plataforma de identificação, valorização e visibilidade de talentos, projectos e iniciativas nas áreas da Gestão, Administração, Ciência, Inovação, Empreendedorismo, Tecnologia e outras áreas do conhecimento e da criatividade humana.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
           <Link
