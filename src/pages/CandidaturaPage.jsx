@@ -378,48 +378,80 @@ export default function CandidaturaPage() {
   }
 
   return (
-    <section className="mx-auto max-w-3xl px-5 py-10 sm:px-8 sm:py-16">
+    <section className="mx-auto max-w-6xl px-5 py-10 sm:px-8 sm:py-16">
       <Link to="/" className="text-sm font-semibold text-ink/60 hover:text-ink">
         ← Início
       </Link>
 
-      <p className="section-label mt-6 text-brand-deep">Candidatura · Vídeo</p>
-      <h1 className="mt-4 text-3xl leading-tight font-bold sm:text-5xl">
-        Apresenta a tua equipa e o teu projecto.
-      </h1>
-      <p className="mt-4 text-base leading-relaxed text-ink/70">
-        O <strong>TECNATO</strong> é uma plataforma de identificação, valorização e visibilidade
-        de talentos, projectos e iniciativas nas áreas da Gestão, Administração, Ciência,
-        Inovação, Empreendedorismo, Tecnologia e outras áreas do conhecimento e da criatividade
-        humana.
-      </p>
-      <p className="mt-3 text-base leading-relaxed text-ink/70">
-        Escolhe como queres enviar o <strong>vídeo</strong> (até {MAX_DURATION_SECONDS / 60} min) e
-        a <strong>foto da equipa</strong> — os dois são obrigatórios. Na plataforma, os ficheiros
-        ficam guardados na nossa nuvem e recebes um código de referência no fim.
-      </p>
+      <div className="mt-8 grid gap-10 lg:grid-cols-2 lg:gap-16">
+        <div>
+          <p className="section-label text-ink/55">Candidatura · Vídeo</p>
+          <h1 className="mt-5 text-4xl leading-[0.92] font-semibold tracking-[-0.055em] sm:text-5xl">
+            Apresenta a tua equipa e o teu{' '}
+            <em className="editorial-serif font-normal tracking-[-0.04em]">projecto</em>.
+          </h1>
+          <p className="mt-6 max-w-xl text-base leading-relaxed text-ink/70">
+            O <strong>TECNATO</strong> é uma plataforma de identificação, valorização e
+            visibilidade de talentos, projectos e iniciativas nas áreas da Gestão, Administração,
+            Ciência, Inovação, Empreendedorismo, Tecnologia e outras áreas do conhecimento e da
+            criatividade humana.
+          </p>
+          <p className="mt-3 max-w-xl text-base leading-relaxed text-ink/70">
+            Escolhe como queres enviar o <strong>vídeo</strong> (até{' '}
+            {MAX_DURATION_SECONDS / 60} min) e a <strong>foto da equipa</strong> — os dois são
+            obrigatórios. Na plataforma, os ficheiros ficam guardados na nossa nuvem e recebes um
+            código de referência no fim.
+          </p>
+          <figure className="relative mt-8 overflow-hidden border border-line">
+            <img
+              src="/images/equipa_campo-do-futuro.png"
+              alt="Equipa TECNATO reunida no Campo do Futuro"
+              className="h-56 w-full object-cover object-top grayscale-[20%] sm:h-72"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-ink/65 via-transparent to-transparent" />
+            <p className="absolute top-4 left-4 bg-brand px-3 py-2 font-mono text-[10px] tracking-[0.14em] uppercase">
+              Mostra quem és
+            </p>
+            <figcaption className="absolute right-4 bottom-4 max-w-52 text-right font-mono text-[10px] leading-relaxed tracking-[0.1em] uppercase text-white/85">
+              O próximo vídeo a ser visto pode ser o teu.
+            </figcaption>
+          </figure>
+        </div>
 
-      <ul className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {[
-          ['Vídeo', `Até ${MAX_DURATION_SECONDS / 60} min`],
-          ['Vídeo (tamanho)', `Até ${MAX_SIZE_MB} MB`],
-          ['Foto da equipa', `Até ${FOTO_MAX_MB} MB`],
-          ['Formatos', 'Vídeo + JPG, PNG'],
-        ].map(([label, value]) => (
-          <li key={label} className="rounded-xl border border-line bg-white px-4 py-3">
-            <p className="text-xs tracking-wider text-ink/50 uppercase">{label}</p>
-            <p className="mt-1 text-sm font-semibold">{value}</p>
-          </li>
-        ))}
-      </ul>
+        <div>
+          <ul className="grid grid-cols-2 gap-3">
+            {[
+              ['Vídeo', `Até ${MAX_DURATION_SECONDS / 60} min`],
+              ['Vídeo (tamanho)', `Até ${MAX_SIZE_MB} MB`],
+              ['Foto da equipa', `Até ${FOTO_MAX_MB} MB`],
+              ['Formatos', 'Vídeo + JPG, PNG'],
+            ].map(([label, value]) => (
+              <li key={label} className="border border-line bg-white px-4 py-3">
+                <p className="font-mono text-[10px] tracking-[0.12em] text-ink/50 uppercase">
+                  {label}
+                </p>
+                <p className="mt-1 text-sm font-semibold">{value}</p>
+              </li>
+            ))}
+          </ul>
 
-      <ChannelChoice
-        value={channel}
-        onChange={(value) => {
-          setChannel(value)
-          if (value === 'whatsapp') track('candidatura_whatsapp')
-        }}
-      />
+          <ChannelChoice
+            value={channel}
+            onChange={(value) => {
+              setChannel(value)
+              if (value === 'whatsapp') track('candidatura_whatsapp')
+            }}
+          />
+
+          {channel === null && (
+            <p className="mt-5 text-sm text-ink/55">
+              Escolhe acima como queres enviar o vídeo para continuares.
+            </p>
+          )}
+        </div>
+      </div>
+
+      <div className="mt-10 max-w-3xl">
 
       {submitError && (
         <div
@@ -734,12 +766,7 @@ export default function CandidaturaPage() {
           </p>
         </form>
       )}
-
-      {channel === null && (
-        <p className="mt-6 text-sm text-ink/55">
-          Escolhe acima como queres enviar o vídeo para continuares.
-        </p>
-      )}
+      </div>
     </section>
   )
 }
