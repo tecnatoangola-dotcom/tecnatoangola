@@ -58,7 +58,11 @@ export const PARCEIROS = [
   },
   {
     nome: 'Supabase',
-    logo: 'https://res.cloudinary.com/ltei8lqg/image/upload/v1792062576/supabase-logo-vector.png',
+    logo: 'https://res.cloudinary.com/ltei8lqg/image/upload/v1792070651/45a7d301-f2f5-46a1-b896-d7fbcc79db8b-removebg-preview.png',
+  },
+  {
+    nome: 'Garcian',
+    logo: 'https://res.cloudinary.com/ltei8lqg/image/upload/v1792070654/supabase-logo-vector__1_-removebg-preview.png',
   },
   {
     nome: 'Anthropic',
