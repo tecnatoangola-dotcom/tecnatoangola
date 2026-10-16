@@ -169,7 +169,7 @@ async function buildDashboard() {
     sb.from('eventos')
       .select('visitor_id, tipo, created_at')
       .gte('created_at', monthSince),
-    sb.from('candidaturas').select('status, municipio, area, created_at'),
+    sb.from('candidaturas').select('status, municipio, area, created_at, referencia, equipa, projecto, avaliado_em'),
     listAllUsers(),
   ])
 
@@ -200,6 +200,31 @@ async function buildDashboard() {
 
   const porArea = {}
   for (const c of todasCands) porArea[c.area] = (porArea[c.area] || 0) + 1
+
+  // Sales Ops — fila de trabalho: pendentes ordenados por idade (mais antigo primeiro)
+  const pendentes = todasCands
+    .filter((c) => c.status === 'submetida' || c.status === 'em_verificacao')
+    .map((c) => {
+      const dias = Math.floor((now - new Date(c.created_at).getTime()) / DAY)
+      const proxima =
+        c.status === 'submetida'
+          ? 'Verificar candidatura'
+          : 'Decidir sentença'
+      const urgencia = dias >= 7 ? 'alta' : dias >= 3 ? 'media' : 'baixa'
+      return {
+        referencia: c.referencia,
+        equipa: c.equipa,
+        projecto: c.projecto,
+        municipio: c.municipio,
+        area: c.area,
+        status: c.status,
+        created_at: c.created_at,
+        dias,
+        proxima,
+        urgencia,
+      }
+    })
+    .sort((a, b) => b.dias - a.dias)
 
   const days = []
   for (let i = 29; i >= 0; i -= 1) {
@@ -238,6 +263,14 @@ async function buildDashboard() {
     por_estado: porEstado,
     por_municipio: porMunicipio,
     por_area: porArea,
+    funil: {
+      visitantes: visitantesMes.size,
+      contactos: converters.size + whatsappMes,
+      candidaturas: candsMes.length,
+      em_verificacao: porEstado.em_verificacao || 0,
+      aprovadas: porEstado.aprovada || 0,
+    },
+    pendentes: pendentes.slice(0, 12),
     serie: days,
   }
 }
