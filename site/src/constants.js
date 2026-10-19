@@ -25,7 +25,7 @@ export const FUNDADORES = [
   },
   {
     nome: 'Elias Sebastião',
-    cargo: 'Co-Fundador do TECNATO',
+    cargo: 'CTO & Co-Fundador do TECNATO',
     foto: '/images/elias-retrato.png',
     bio: 'Cuida da operação e da tecnologia da plataforma. Do primeiro código ao painel que liga talentos a oportunidades, faz parte da construção diária do TECNATO.',
   },
