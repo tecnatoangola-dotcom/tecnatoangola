@@ -46,7 +46,7 @@ app.use(cors({
   },
   credentials: true,
 }))
-app.use(express.json({ limit: '2mb' }))
+app.use(express.json({ limit: '7mb' }))
 
 if (IS_PRODUCTION && (!SECRET || SECRET.length < 32 || !SUPABASE_URL || !SERVICE_KEY || !ADMINS.length || !ADMIN_ORIGIN)) {
   throw new Error('Variáveis de segurança do admin incompletas. Configure ADMIN_SECRET, ADMIN_USERS, ADMIN_ORIGIN e Supabase.')
@@ -538,6 +538,88 @@ app.delete(
       `[TECNATO-ADMIN] Candidatura ${referencia} apagada por ${req.admin.email}`,
     )
     res.json({ ok: true, mensagem: 'Candidatura apagada definitivamente da base de dados.' })
+  }),
+)
+
+// ── Editor de conteúdo do site ───────────────────────────────
+const SITE_CHAVES = ['hero', 'galeria', 'candidatura', 'quem_somos', 'parceiros']
+const SITE_TIPOS = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/svg+xml': 'svg' }
+
+app.get(
+  '/api/site',
+  requireAdmin,
+  requireService,
+  asyncRoute(async (_req, res) => {
+    const { data, error } = await sb
+      .from('site_conteudo')
+      .select('chave, valor, actualizado_em, actualizado_por')
+    if (error) throw error
+    const conteudo = {}
+    for (const row of data || []) {
+      conteudo[row.chave] = {
+        valor: row.valor,
+        actualizado_em: row.actualizado_em,
+        actualizado_por: row.actualizado_por,
+      }
+    }
+    res.json({ conteudo })
+  }),
+)
+
+app.put(
+  '/api/site/:chave',
+  requireAdmin,
+  requireService,
+  asyncRoute(async (req, res) => {
+    const chave = String(req.params.chave)
+    if (!SITE_CHAVES.includes(chave)) return res.status(400).json({ error: 'Secção desconhecida.' })
+    const valor = req.body?.valor
+    if (!valor || typeof valor !== 'object' || Array.isArray(valor)) {
+      return res.status(400).json({ error: 'Conteúdo inválido.' })
+    }
+    if (JSON.stringify(valor).length > 200_000) {
+      return res.status(400).json({ error: 'Conteúdo demasiado grande.' })
+    }
+    const { data, error } = await sb
+      .from('site_conteudo')
+      .upsert(
+        {
+          chave,
+          valor,
+          actualizado_em: new Date().toISOString(),
+          actualizado_por: req.admin.email,
+        },
+        { onConflict: 'chave' },
+      )
+      .select('chave, valor, actualizado_em, actualizado_por')
+      .single()
+    if (error) throw error
+    res.json({ ok: true, entrada: data })
+  }),
+)
+
+app.post(
+  '/api/site/upload',
+  requireAdmin,
+  requireService,
+  asyncRoute(async (req, res) => {
+    const { seccao, nome, contentType, dataBase64 } = req.body || {}
+    if (!SITE_CHAVES.includes(seccao)) return res.status(400).json({ error: 'Secção inválida.' })
+    const ext = SITE_TIPOS[contentType]
+    if (!ext) return res.status(400).json({ error: 'Formato não suportado (usa JPG, PNG, WEBP ou SVG).' })
+    const buffer = Buffer.from(String(dataBase64 || ''), 'base64')
+    if (!buffer.length) return res.status(400).json({ error: 'Ficheiro vazio.' })
+    if (buffer.length > 4_000_000) {
+      return res.status(400).json({ error: 'Ficheiro demasiado grande (máx. 4 MB).' })
+    }
+    const nomeSeguro = String(nome || 'ficheiro')
+      .replace(/\.[a-zA-Z0-9]{1,5}$/, '')
+      .replace(/[^a-zA-Z0-9._-]/g, '_')
+      .slice(0, 60)
+    const path = `${seccao}/${Date.now()}-${nomeSeguro}.${ext}`
+    const { error } = await sb.storage.from('site').upload(path, buffer, { contentType, upsert: true })
+    if (error) throw error
+    res.json({ ok: true, path, url: `${SUPABASE_URL}/storage/v1/object/public/site/${path}` })
   }),
 )
 

@@ -1,6 +1,9 @@
-import { PARCEIROS } from '../constants.js'
+import { useConteudo } from '../lib/conteudo.js'
 
 export default function ParceirosMarquee() {
+  const conteudo = useConteudo()
+  const parceiros = conteudo.parceiros.logos || []
+  if (!parceiros.length) return null
   return (
     <div
       className="overflow-hidden border-y border-line py-7 sm:py-9"
@@ -14,7 +17,7 @@ export default function ParceirosMarquee() {
             className="flex items-center gap-10 sm:gap-14"
             aria-hidden={copy === 1}
           >
-            {PARCEIROS.map((parceiro) => (
+            {parceiros.map((parceiro) => (
               <div key={parceiro.nome} className="flex h-12 w-36 shrink-0 items-center justify-center px-2 sm:h-14 sm:w-44">
                 <img
                   src={parceiro.logo}

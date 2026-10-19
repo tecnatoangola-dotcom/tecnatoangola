@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { useConteudo } from '../lib/conteudo.js'
 
 const HIGHLIGHTS = [
   ['Palco', 'para talentos que também precisam de ser vistos'],
@@ -7,6 +8,7 @@ const HIGHLIGHTS = [
 ]
 
 export default function Hero() {
+  const conteudo = useConteudo()
   return (
     <section id="topo" className="relative overflow-hidden border-b border-line bg-paper">
       <div className="mx-auto grid max-w-[1440px] border-x border-line lg:grid-cols-12">
@@ -45,7 +47,7 @@ export default function Hero() {
           </div>
         </div>
         <div className="relative min-h-[420px] overflow-hidden border-t border-line lg:col-span-4 lg:border-t-0 lg:border-l">
-          <img src="/images/oficina-tecnologica.png" alt="Jovens a construírem um protótipo numa oficina" className="h-full w-full object-cover grayscale-[20%]" />
+          <img src={conteudo.hero.imagem} alt={conteudo.hero.alt} className="h-full w-full object-cover grayscale-[20%]" />
           <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent" />
           <p className="absolute top-5 left-5 bg-brand px-3 py-2 font-mono text-[10px] tracking-[0.14em] uppercase">Lugar para construir</p>
           <p className="absolute right-5 bottom-5 max-w-48 text-right font-mono text-[10px] leading-relaxed tracking-[0.1em] uppercase text-white/80">O futuro nasce onde alguém decide começar.</p>

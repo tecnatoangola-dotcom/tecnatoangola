@@ -13,6 +13,7 @@ import {
   uploadFile,
 } from '../lib/candidaturas.js'
 import { isSupabaseConfigured } from '../lib/supabase.js'
+import { fonteVideo, useConteudo } from '../lib/conteudo.js'
 import { track } from '../lib/track.js'
 
 const MUNICIPIOS = [
@@ -109,6 +110,7 @@ function ChannelChoice({ value, onChange }) {
 
 export default function CandidaturaPage() {
   const { user } = useAuth()
+  const conteudo = useConteudo()
   const navigate = useNavigate()
   const [channel, setChannel] = useState(null)
   const [form, setForm] = useState(EMPTY_FORM)
@@ -402,20 +404,38 @@ export default function CandidaturaPage() {
             obrigatórios. Na plataforma, os ficheiros ficam guardados na nossa nuvem e recebes um
             código de referência no fim.
           </p>
-          <figure className="relative mt-8 overflow-hidden border border-line">
-            <img
-              src="/images/equipa_campo-do-futuro.png"
-              alt="Equipa TECNATO reunida no Campo do Futuro"
-              className="h-56 w-full object-cover object-top grayscale-[20%] sm:h-72"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-ink/65 via-transparent to-transparent" />
-            <p className="absolute top-4 left-4 bg-brand px-3 py-2 font-mono text-[10px] tracking-[0.14em] uppercase">
-              Mostra quem és
-            </p>
-            <figcaption className="absolute right-4 bottom-4 max-w-52 text-right font-mono text-[10px] leading-relaxed tracking-[0.1em] uppercase text-white/85">
-              O próximo vídeo a ser visto pode ser o teu.
-            </figcaption>
-          </figure>
+          {(() => {
+            const videoCandidatura = fonteVideo(conteudo.candidatura.videoUrl)
+            if (!videoCandidatura) return null
+            return (
+              <figure className="relative mt-8 overflow-hidden border border-line bg-ink">
+                {videoCandidatura.tipo === 'iframe' ? (
+                  <iframe
+                    src={videoCandidatura.src}
+                    title="Vídeo TECNATO"
+                    className="aspect-video w-full"
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : (
+                  <video
+                    src={videoCandidatura.src}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="aspect-video w-full object-cover"
+                  />
+                )}
+                <p className="absolute top-4 left-4 bg-brand px-3 py-2 font-mono text-[10px] tracking-[0.14em] uppercase">
+                  Mostra quem és
+                </p>
+                <figcaption className="absolute right-4 bottom-4 max-w-52 text-right font-mono text-[10px] leading-relaxed tracking-[0.1em] uppercase text-white/85">
+                  O próximo vídeo a ser visto pode ser o teu.
+                </figcaption>
+              </figure>
+            )
+          })()}
         </div>
 
         <div>

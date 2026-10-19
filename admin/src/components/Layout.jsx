@@ -7,6 +7,7 @@ const LINKS = [
   { to: '/candidaturas', label: 'Candidaturas', icon: '02' },
   { to: '/utilizadores', label: 'Utilizadores', icon: '03' },
   { to: '/relatorios', label: 'Relatórios', icon: '04' },
+  { to: '/site', label: 'Site', icon: '05' },
 ]
 
 function NavLinks({ onNavigate, variant }) {

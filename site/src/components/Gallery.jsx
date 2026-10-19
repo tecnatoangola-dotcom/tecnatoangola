@@ -1,30 +1,4 @@
-const PHOTOS = [
-  {
-    src: '/images/oficina-tecnologica.png',
-    alt: 'Jovens engenheiros da equipa TECNATO a desenvolver um protótipo numa oficina tecnológica',
-    caption: 'Do protótipo à oficina',
-  },
-  {
-    src: '/images/da-ideia-ao-negocio.png',
-    alt: 'Equipa TECNATO a planear a transformação de uma ideia num negócio',
-    caption: 'Da ideia ao negócio',
-  },
-  {
-    src: '/images/estrategia-equipa.png',
-    alt: 'Sessão de estratégia TECNATO com apresentação de um plano de negócio',
-    caption: 'Sessões de estratégia',
-  },
-  {
-    src: '/images/arquitetos-futuro.png',
-    alt: 'Jovens arquitetos da equipa TECNATO a planearem o futuro numa mesa de trabalho',
-    caption: 'Planear o futuro',
-  },
-  {
-    src: '/images/equipa_campo-do-futuro.png',
-    alt: 'Equipa TECNATO reunida no Campo do Futuro',
-    caption: 'Equipa no Campo do Futuro',
-  },
-]
+import { useConteudo } from '../lib/conteudo.js'
 
 function Card({ photo, duplicate }) {
   return (
@@ -48,12 +22,16 @@ function Card({ photo, duplicate }) {
 }
 
 export default function Gallery() {
-  const items = [...PHOTOS, ...PHOTOS]
+  const conteudo = useConteudo()
+  const photos = conteudo.galeria.imagens?.length ? conteudo.galeria.imagens : []
+  const items = [...photos, ...photos]
+
+  if (!photos.length) return null
 
   return (
     <section aria-label="Galeria TECNATO" className="overflow-hidden border-b border-line bg-paper py-6">
       <div className="mx-auto mb-5 flex max-w-[1440px] items-center justify-between border-x border-line px-5 sm:px-8 lg:px-12">
-        <p className="section-label text-ink/50">Em movimento / registos de campo</p>
+        <p className="section-label text-ink/50">{conteudo.galeria.etiqueta}</p>
         <p className="hidden font-mono text-[10px] tracking-[0.12em] text-ink/40 uppercase sm:block">Luanda · Angola</p>
       </div>
 
@@ -63,7 +41,7 @@ export default function Gallery() {
             <Card
               key={`${photo.src}-${index}`}
               photo={photo}
-              duplicate={index >= PHOTOS.length}
+              duplicate={index >= photos.length}
             />
           ))}
         </div>

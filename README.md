@@ -42,6 +42,12 @@ cd admin; npm install; npm run dev
    - Env vars: `NODE_ENV=production`, `ADMIN_ORIGIN=https://<dominio-admin>`, `ADMIN_SECRET`, `ADMIN_USERS`, `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `SUPABASE_BUCKET=candidaturas`, `SUPABASE_BUCKET_PERFIS=perfis`
    - Depois de criar o site admin, copia o domínio gerado para `ADMIN_ORIGIN` e para o CORS do servidor.
 
+## Editor do site (aba «Site» no CRM)
+
+- O CRM tem a aba **Site** (5 sub-abas: Hero, Galeria, Candidatura, Quem somos, Parceiros) para editar textos, fotos e o vídeo da página de candidatura sem tocar no código.
+- Conteúdo guardado na tabela Supabase `site_conteudo` (RLS com leitura pública; escrita só via *service key* da API admin) e ficheiros no bucket público `site` (setup: `node admin/scripts/setup-site-conteudo.mjs`).
+- O site lê o conteúdo com a anon key e cai nos valores por omissão (`site/src/lib/conteudo.js`) se a BD estiver vazia ou o Supabase não estiver configurado.
+
 ## Segurança
 
 - Sessão admin em cookie httpOnly (`SameSite=Strict`, `Secure` em produção).

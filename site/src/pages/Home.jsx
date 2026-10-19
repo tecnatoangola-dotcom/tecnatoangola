@@ -10,8 +10,10 @@ import Marquee from '../components/Marquee.jsx'
 import Participar from '../components/Participar.jsx'
 import Projecto from '../components/Projecto.jsx'
 import ParceirosMarquee from '../components/ParceirosMarquee.jsx'
+import { useConteudo } from '../lib/conteudo.js'
 
 export default function Home() {
+  const conteudo = useConteudo()
   return (
     <>
       <Hero />
@@ -25,8 +27,8 @@ export default function Home() {
           <div className="grid gap-6 lg:grid-cols-12">
             <p className="section-label text-brand-deep lg:col-span-2">03 / Parceiros</p>
             <div className="lg:col-span-7">
-              <h2 className="text-4xl leading-[0.95] font-semibold tracking-[-0.055em] sm:text-5xl">Quem caminha <em className="editorial-serif font-normal">connosco.</em></h2>
-              <p className="mt-5 max-w-xl text-base leading-relaxed text-ink/70">Ferramentas e equipas que tornam o TECNATO possível — da infraestrutura à inteligência que potencia a plataforma.</p>
+              <h2 className="text-4xl leading-[0.95] font-semibold tracking-[-0.055em] sm:text-5xl">{conteudo.parceiros.titulo_normal} <em className="editorial-serif font-normal">{conteudo.parceiros.titulo_acento}</em></h2>
+              <p className="mt-5 max-w-xl text-base leading-relaxed text-ink/70">{conteudo.parceiros.subtitulo}</p>
             </div>
             <p className="font-mono text-[10px] leading-relaxed tracking-[0.12em] uppercase text-ink/45 lg:col-span-3 lg:self-end lg:text-right">Construído em Angola<br />com parceiros globais</p>
           </div>

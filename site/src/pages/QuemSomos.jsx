@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Section, SectionLabel } from '../components/Section.jsx'
 import { FUNDADORES, WHATSAPP_URL } from '../constants.js'
+import { useConteudo } from '../lib/conteudo.js'
 
 const PILARES = [
   {
@@ -18,6 +19,7 @@ const PILARES = [
 ]
 
 export default function QuemSomos() {
+  const conteudo = useConteudo()
   return (
     <>
       <section className="border-b border-line bg-paper">
@@ -58,9 +60,9 @@ export default function QuemSomos() {
       <Section
         label="Fundadores"
         index="02"
-        title="Quem está por trás do TECNATO."
+        title={conteudo.quem_somos.titulo}
         tone="dark"
-        intro="Duas pessoas, uma obsessão: que o talento angolano deixe de depender de sorte para depender de visibilidade."
+        intro={conteudo.quem_somos.intro}
       >
         <div className="mt-10 grid max-w-3xl gap-5 sm:grid-cols-2">
           {FUNDADORES.map((pessoa) => (

@@ -6,6 +6,7 @@ import Candidaturas from './pages/Candidaturas.jsx'
 import Dashboard from './pages/Dashboard.jsx'
 import Login from './pages/Login.jsx'
 import Relatorios from './pages/Relatorios.jsx'
+import Site from './pages/Site.jsx'
 import Usuarios from './pages/Usuarios.jsx'
 
 function Protected({ children }) {
@@ -44,6 +45,7 @@ export default function App() {
           <Route path="/candidaturas" element={<Candidaturas />} />
           <Route path="/utilizadores" element={<Usuarios />} />
           <Route path="/relatorios" element={<Relatorios />} />
+          <Route path="/site" element={<Site />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
