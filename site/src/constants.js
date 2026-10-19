@@ -19,7 +19,7 @@ export const NAV_LINKS = [
 export const FUNDADORES = [
   {
     nome: 'Garcia Manuel',
-    cargo: 'CEO e Co-Fundador do TECNATO',
+    cargo: 'CEO e Fundador do TECNATO',
     foto: '/images/garcia-retrato.png',
     bio: 'Lidera a visão e a estratégia do TECNATO. Acredita que o talento angolano existe em todos os bairros e que só falta uma luz para o mundo o ver.',
   },
