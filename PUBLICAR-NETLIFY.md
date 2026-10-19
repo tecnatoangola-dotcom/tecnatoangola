@@ -60,6 +60,18 @@ Liga o repositório completo (`E:\Tecnato\repo`) e define em cada sítio:
 **Site settings → Build & deploy → Build → Base directory** = `site` (site principal) ou `admin` (CRM).
 O Netlify lê o `netlify.toml` dessa pasta e compila tudo (com as `VITE_*` do ambiente).
 
+## Variáveis de ambiente que "não funcionam"
+
+| Sintoma | Causa | Solução |
+|---|---|---|
+| As variáveis foram guardadas mas nada muda | As functions só recebem as variáveis **no deploy seguinte** | Netlify → **Deploys → Trigger deploy → Clear cache and deploy site** |
+| O CRM não carrega (erro de rede/CORS) | `ADMIN_ORIGIN` não é a origem exacta do site do admin | `ADMIN_ORIGIN=https://<admin>.netlify.app,https://admin.tecnatoangola.com` (aceita várias, separadas por vírgula) |
+| O site não mostra o vídeo/texto do CRM | `/api/conteudo` não devolve JSON | Testa `https://<site>.netlify.app/api/conteudo` — se devolver HTML, a function não foi publicada |
+| O domínio mostra "Parked Domain" | O DNS ainda aponta para o parque da Hostinger | Domain management → Add custom domain → seguir os registos DNS que o Netlify dá |
+
+Diagnóstico rápido do admin: `https://<admin>.netlify.app/api/diagnostico`
+(devolve `origens_permitidas`, `admin_secret_ok`, `supabase_ok`, `n_admins` — **sem revelar segredos**).
+
 ## Actualizar depois
 
 - **Textos, fotos, vídeo**: nada de deploy — edita na aba **Site** do CRM (o site lê em `/api/conteudo`).

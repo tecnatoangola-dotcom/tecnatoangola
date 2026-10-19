@@ -28,6 +28,13 @@ const sb =
       })
     : null
 
+// ADMIN_ORIGIN aceita uma ou varias origens separadas por virgula
+// (ex.: https://tecnato-admin.netlify.app,https://admin.tecnatoangola.com)
+const ADMIN_ORIGINS = String(ADMIN_ORIGIN || '')
+  .split(',')
+  .map((origem) => origem.trim())
+  .filter(Boolean)
+
 const app = express()
 app.disable('x-powered-by')
 app.set('trust proxy', 1)
@@ -41,7 +48,9 @@ app.use((req, res, next) => {
 })
 app.use(cors({
   origin(origin, callback) {
-    if (!origin || !ADMIN_ORIGIN || origin === ADMIN_ORIGIN) return callback(null, true)
+    if (!origin || !ADMIN_ORIGINS.length || ADMIN_ORIGINS.includes(origin)) {
+      return callback(null, true)
+    }
     return callback(new Error('Origem não autorizada.'))
   },
   credentials: true,
@@ -752,6 +761,21 @@ app.get(
 
 app.get('/api/health', (_req, res) =>
   res.json({ ok: true, service: Boolean(sb), admins: ADMINS.length }),
+)
+
+// Diagnóstico das variáveis de ambiente — não expõe segredos, só diz o que está OK.
+app.get('/api/diagnostico', (_req, res) =>
+  res.json({
+    ok: true,
+    servico: 'tecnato-admin',
+    node_env: process.env.NODE_ENV || '(vazio)',
+    em_netlify: Boolean(process.env.NETLIFY),
+    origens_permitidas: ADMIN_ORIGINS,
+    admin_secret_ok: Boolean(SECRET && SECRET.length >= 32),
+    n_admins: ADMINS.length,
+    supabase_ok: Boolean(SUPABASE_URL && SERVICE_KEY),
+    buckets: { candidaturas: BUCKET, perfis: BUCKET_PERFIS },
+  }),
 )
 
 // ── SPA ──────────────────────────────────────────────────────
