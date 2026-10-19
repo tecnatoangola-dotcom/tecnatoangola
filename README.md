@@ -1,16 +1,50 @@
-# React + Vite
+# TECNATO — Monorepo
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Plataforma de identificação, valorização e visibilidade de talentos, projectos e
+iniciativas (Luanda, Angola). Este repositório contém os dois projectos:
 
-Currently, two official plugins are available:
+| Pasta | Projecto | Stack | Portas (dev) |
+| --- | --- | --- | --- |
+| `site/` | Landing + candidaturas (PT-AO) | Vite + React + Tailwind v4 | `5174` |
+| `admin/` | CRM / painel administrativo | Express + React + Recharts | UI `5175`, API `5200` |
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Desenvolvimento local
 
-## React Compiler
+```powershell
+# Raiz — lint de todo o monorepo (site + admin)
+npm install
+npm run lint
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+# Site
+cd site; npm install; npm run dev -- --port 5174 --strictPort
 
-## Expanding the Oxlint configuration
+# Admin (API + UI em paralelo)
+cd admin; npm install; npm run dev
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+### Ficheiros `.env` (nunca commitados)
+
+- `site/.env` — ver `site/.env.example`:
+  - `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_SUPABASE_BUCKET=candidaturas`, `VITE_MAX_VIDEO_MB=30`
+- `admin/.env` — ver `admin/.env.example`:
+  - `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `SUPABASE_BUCKET`, `SUPABASE_BUCKET_PERFIS`
+  - `ADMIN_SECRET`, `ADMIN_USERS` (JSON com hashes scrypt), `ADMIN_ORIGIN`
+
+## Publicar no Netlify (2 sites, 1 repositório)
+
+1. **Site TECNATO**
+   - *Base directory:* `site`
+   - Build: `npm run build` · Publish: `dist` (lidos do `site/netlify.toml`)
+   - Env vars: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_SUPABASE_BUCKET=candidaturas`, `VITE_MAX_VIDEO_MB=30`
+2. **Admin CRM**
+   - *Base directory:* `admin`
+   - Build: `npm run build` · Publish: `dist` · Functions: `netlify/functions`
+   - Env vars: `NODE_ENV=production`, `ADMIN_ORIGIN=https://<dominio-admin>`, `ADMIN_SECRET`, `ADMIN_USERS`, `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `SUPABASE_BUCKET=candidaturas`, `SUPABASE_BUCKET_PERFIS=perfis`
+   - Depois de criar o site admin, copia o domínio gerado para `ADMIN_ORIGIN` e para o CORS do servidor.
+
+## Segurança
+
+- Sessão admin em cookie httpOnly (`SameSite=Strict`, `Secure` em produção).
+- Senhas admin guardadas como hashes **scrypt** (plaintext rejeitado em produção).
+- Rate limit no login, CORS restrito a `ADMIN_ORIGIN`, headers de segurança (CSP, nosniff, DENY).
+- `.env` fora do git (`.gitignore` cobre `.env` e `.env.*` em todo o repositório).
