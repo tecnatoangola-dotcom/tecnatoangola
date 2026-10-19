@@ -1,16 +1,17 @@
 import { useEffect, useMemo, useState } from 'react'
+import { CheckCircle2, Search, Sparkles, XCircle } from 'lucide-react'
 import { api } from '../api.js'
 
 const STATES = {
-  submetida: { label: 'Nova', style: 'bg-brand/35 text-ink' },
-  em_verificacao: { label: 'Em análise', style: 'bg-blue-100 text-blue-900' },
-  aprovada: { label: 'Aprovada', style: 'bg-emerald-100 text-emerald-900' },
-  rejeitada: { label: 'Não seleccionada', style: 'bg-red-100 text-red-900' },
+  submetida: { label: 'Nova', style: 'bg-brand/35 text-ink', Icon: Sparkles },
+  em_verificacao: { label: 'Em análise', style: 'bg-blue-100 text-blue-900', Icon: Search },
+  aprovada: { label: 'Aprovada', style: 'bg-emerald-100 text-emerald-900', Icon: CheckCircle2 },
+  rejeitada: { label: 'Não seleccionada', style: 'bg-red-100 text-red-900', Icon: XCircle },
 }
 
 function Status({ value }) {
   const item = STATES[value] || STATES.submetida
-  return <span className={`inline-flex shrink-0 px-2.5 py-1 font-mono text-[10px] font-medium tracking-[0.06em] uppercase ${item.style}`}>{item.label}</span>
+  return <span className={`inline-flex shrink-0 items-center gap-1 px-2.5 py-1 font-mono text-[10px] font-medium tracking-[0.06em] uppercase ${item.style}`}><item.Icon aria-hidden="true" size={11} strokeWidth={2} />{item.label}</span>
 }
 
 function Detail({ candidatura, onClose, onUpdated }) {
@@ -77,7 +78,10 @@ function Pipeline({ filtered, onOpen, onMove, busy, movimentos }) {
         return (
           <section key={key} className="flex flex-col border border-line bg-paper">
             <header className={`flex items-center justify-between gap-2 border-b border-line px-3 py-2.5 ${key === 'submetida' ? 'bg-brand/30' : 'bg-white'}`}>
-              <p className="admin-label text-ink/60">{item.label}</p>
+              <p className="admin-label flex items-center gap-1.5 text-ink/60">
+                <item.Icon aria-hidden="true" size={13} strokeWidth={1.8} className="shrink-0 text-ink/45" />
+                {item.label}
+              </p>
               <span className="font-mono text-xs font-bold">{cards.length}</span>
             </header>
             <div className="flex-1 space-y-2 overflow-y-auto p-2" style={{ maxHeight: '65vh' }}>

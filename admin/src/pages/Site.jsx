@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
+import { Handshake, Image, Images, Users, Video } from 'lucide-react'
 import { api } from '../api.js'
 
 const SECCOES = [
-  { chave: 'hero', label: 'Hero' },
-  { chave: 'galeria', label: 'Galeria' },
-  { chave: 'candidatura', label: 'Candidatura' },
-  { chave: 'quem_somos', label: 'Quem somos' },
-  { chave: 'parceiros', label: 'Parceiros' },
+  { chave: 'hero', label: 'Hero', Icon: Image },
+  { chave: 'galeria', label: 'Galeria', Icon: Images },
+  { chave: 'candidatura', label: 'Candidatura', Icon: Video },
+  { chave: 'quem_somos', label: 'Quem somos', Icon: Users },
+  { chave: 'parceiros', label: 'Parceiros', Icon: Handshake },
 ]
 
 // Valores actuais do site — servem de base quando a BD ainda não tem nada guardado.
@@ -215,10 +216,11 @@ export default function Site() {
             key={seccao.chave}
             type="button"
             onClick={() => { setAba(seccao.chave); setFeedback(''); setErro('') }}
-            className={`min-h-10 border-r border-line px-4 font-mono text-[10px] tracking-[0.1em] uppercase transition-colors last:border-r-0 ${
+            className={`inline-flex min-h-10 items-center gap-1.5 border-r border-line px-4 font-mono text-[10px] tracking-[0.1em] uppercase transition-colors last:border-r-0 ${
               aba === seccao.chave ? 'bg-ink text-white' : 'hover:bg-paper'
             }`}
           >
+            <seccao.Icon aria-hidden="true" size={13} strokeWidth={1.8} />
             {seccao.label}
           </button>
         ))}
@@ -311,7 +313,8 @@ export default function Site() {
             />
             <p className="text-xs leading-relaxed text-ink/55">
               O vídeo aparece na página de candidatura (lado esquerdo) e reproduz automaticamente,
-              sem som, em ciclo. Deixa vazio para esconder. Actualizar o link actualiza o vídeo no site.
+              em ciclo. Começa sempre sem som — política de autoplay dos browsers — mas o site
+              mostra o botão «Ligar som» no canto do vídeo. Deixa vazio para esconder.
             </p>
           </div>
           <div>

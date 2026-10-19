@@ -65,7 +65,7 @@ export function fonteVideo(url) {
   if (yt) {
     return {
       tipo: 'iframe',
-      src: `https://www.youtube.com/embed/${yt[1]}?autoplay=1&mute=1&loop=1&playlist=${yt[1]}&controls=0&playsinline=1&modestbranding=1`,
+      src: `https://www.youtube.com/embed/${yt[1]}?autoplay=1&mute=1&loop=1&playlist=${yt[1]}&controls=0&playsinline=1&modestbranding=1&enablejsapi=1`,
     }
   }
   const vimeo = url.match(/vimeo\.com\/(\d+)/)

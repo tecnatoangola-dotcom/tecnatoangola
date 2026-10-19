@@ -1,23 +1,24 @@
 import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { BarChart3, Globe, Inbox, LayoutDashboard, Users } from 'lucide-react'
 import { api, clearSession, getAdmin } from '../api.js'
 
 const LINKS = [
-  { to: '/', label: 'Visão geral', icon: '01' },
-  { to: '/candidaturas', label: 'Candidaturas', icon: '02' },
-  { to: '/utilizadores', label: 'Utilizadores', icon: '03' },
-  { to: '/relatorios', label: 'Relatórios', icon: '04' },
-  { to: '/site', label: 'Site', icon: '05' },
+  { to: '/', label: 'Visão geral', Icon: LayoutDashboard },
+  { to: '/candidaturas', label: 'Candidaturas', Icon: Inbox },
+  { to: '/utilizadores', label: 'Utilizadores', Icon: Users },
+  { to: '/relatorios', label: 'Relatórios', Icon: BarChart3 },
+  { to: '/site', label: 'Site', Icon: Globe },
 ]
 
 function NavLinks({ onNavigate, variant }) {
   return (
     <nav className={`flex ${variant === 'drawer' ? 'flex-col gap-1 px-4' : 'gap-1 overflow-x-auto px-3 pb-3 lg:flex-col lg:px-4 lg:pb-0'}`}>
-      {LINKS.map((link) => (
+      {LINKS.map(({ to, label, Icon }) => (
         <NavLink
-          key={link.to}
-          to={link.to}
-          end={link.to === '/'}
+          key={to}
+          to={to}
+          end={to === '/'}
           onClick={onNavigate}
           className={({ isActive }) =>
             `flex min-h-11 shrink-0 items-center gap-3 border-l-2 px-3 py-2.5 text-sm font-medium transition-colors ${
@@ -25,10 +26,17 @@ function NavLinks({ onNavigate, variant }) {
             }`
           }
         >
-          <span aria-hidden="true" className={`font-mono text-[10px] tracking-wider ${variant === 'drawer' ? '' : 'lg:text-white/40'}`}>
-            {link.icon}
-          </span>
-          {link.label}
+          {({ isActive }) => (
+            <>
+              <Icon
+                aria-hidden="true"
+                size={17}
+                strokeWidth={1.8}
+                className={isActive ? 'text-brand' : 'text-white/40'}
+              />
+              {label}
+            </>
+          )}
         </NavLink>
       ))}
     </nav>

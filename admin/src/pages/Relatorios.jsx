@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Activity, BarChart3, Inbox, Users } from 'lucide-react'
 import { api } from '../api.js'
 
 const FOLHAS = [
@@ -6,21 +7,25 @@ const FOLHAS = [
     nome: 'Resumo',
     desc: 'Todos os indicadores do dashboard: online, submetidas, registados, WhatsApp, estados.',
     key: 'resumo',
+    Icon: BarChart3,
   },
   {
     nome: 'Utilizadores',
     desc: 'Nome, email, data de criação, último login, confirmação e nº de candidaturas.',
     key: 'users',
+    Icon: Users,
   },
   {
     nome: 'Candidaturas',
     desc: 'Referência, equipa, projecto, município, área, contactos, descrição, estado e sentença.',
     key: 'cands',
+    Icon: Inbox,
   },
   {
     nome: 'Eventos (30 dias)',
     desc: 'Agrupamento diário de visitas, registos, envios de plataforma e WhatsApp.',
     key: 'eventos',
+    Icon: Activity,
   },
 ]
 
@@ -93,7 +98,8 @@ export default function Relatorios() {
         {FOLHAS.map((folha, index) => (
           <div key={folha.nome} className="border border-line bg-white p-4">
             <div className="flex items-baseline justify-between gap-2">
-              <p className="admin-label text-ink/45">
+              <p className="admin-label flex items-center gap-1.5 text-ink/45">
+                <folha.Icon aria-hidden="true" size={13} strokeWidth={1.8} className="shrink-0 text-ink/40" />
                 {String(index + 1).padStart(2, '0')} / folha
               </p>
               <span className="font-mono text-[11px] text-ink/50">

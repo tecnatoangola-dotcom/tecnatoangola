@@ -27,3 +27,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Pastas de publicacao Netlify (contem guia com valores locais)
+/publicar/

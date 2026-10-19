@@ -111,6 +111,8 @@ function ChannelChoice({ value, onChange }) {
 export default function CandidaturaPage() {
   const { user } = useAuth()
   const conteudo = useConteudo()
+  const [somLigado, setSomLigado] = useState(false)
+  const figureVideoRef = useRef(null)
   const navigate = useNavigate()
   const [channel, setChannel] = useState(null)
   const [form, setForm] = useState(EMPTY_FORM)
@@ -125,6 +127,34 @@ export default function CandidaturaPage() {
   const [submitError, setSubmitError] = useState('')
   const [reference, setReference] = useState('')
   const [copied, setCopied] = useState(false)
+
+  function alternarSom() {
+    const ligar = !somLigado
+    const caixa = figureVideoRef.current
+    const fonte = fonteVideo(conteudo.candidatura.videoUrl)
+    const iframe = caixa?.querySelector('iframe')
+    const videoNat = caixa?.querySelector('video')
+    if (iframe && fonte?.src.includes('youtube.com')) {
+      const cmd = (func, args = []) =>
+        iframe.contentWindow?.postMessage(JSON.stringify({ event: 'command', func, args }), '*')
+      if (ligar) {
+        cmd('unMute')
+        cmd('setVolume', [100])
+        cmd('playVideo')
+      } else {
+        cmd('mute')
+      }
+    } else if (iframe && fonte?.src.includes('vimeo.com')) {
+      iframe.contentWindow?.postMessage(
+        JSON.stringify({ method: 'setVolume', value: ligar ? 1 : 0 }),
+        '*',
+      )
+    } else if (videoNat) {
+      videoNat.muted = !ligar
+      if (ligar) videoNat.play().catch(() => {})
+    }
+    setSomLigado(ligar)
+  }
   const fileInputRef = useRef(null)
   const photoInputRef = useRef(null)
 
@@ -408,7 +438,7 @@ export default function CandidaturaPage() {
             const videoCandidatura = fonteVideo(conteudo.candidatura.videoUrl)
             if (!videoCandidatura) return null
             return (
-              <figure className="relative mt-8 overflow-hidden border border-line bg-ink">
+              <figure ref={figureVideoRef} className="relative mt-8 overflow-hidden border border-line bg-ink">
                 {videoCandidatura.tipo === 'iframe' ? (
                   <iframe
                     src={videoCandidatura.src}
@@ -430,6 +460,13 @@ export default function CandidaturaPage() {
                 <p className="absolute top-4 left-4 bg-brand px-3 py-2 font-mono text-[10px] tracking-[0.14em] uppercase">
                   Mostra quem és
                 </p>
+                <button
+                  type="button"
+                  onClick={alternarSom}
+                  className="absolute top-4 right-4 bg-ink/85 px-3 py-2 font-mono text-[10px] tracking-[0.14em] text-white uppercase backdrop-blur-sm transition-colors hover:bg-brand hover:text-ink"
+                >
+                  {somLigado ? 'Silenciar' : 'Ligar som'}
+                </button>
                 <figcaption className="absolute right-4 bottom-4 max-w-52 text-right font-mono text-[10px] leading-relaxed tracking-[0.1em] uppercase text-white/85">
                   O próximo vídeo a ser visto pode ser o teu.
                 </figcaption>

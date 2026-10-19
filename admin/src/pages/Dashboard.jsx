@@ -15,6 +15,22 @@ import {
   XAxis,
   YAxis,
 } from 'recharts'
+import {
+  Activity,
+  AlertTriangle,
+  BadgeCheck,
+  FileSearch,
+  Filter,
+  Hourglass,
+  Inbox,
+  MessageCircle,
+  Search,
+  Send,
+  Ticket,
+  Timer,
+  TrendingUp,
+  UserPlus,
+} from 'lucide-react'
 import { api } from '../api.js'
 
 const MUNICIPIOS = [
@@ -50,14 +66,24 @@ const URGENCIA = {
 }
 
 /* Cartão pequeno e denso — identidade do hero (label mono + número forte) */
-function Mini({ label, value, hint, tone = 'light' }) {
+function Mini({ label, value, hint, tone = 'light', Icon }) {
   return (
     <div
       className={`border px-3 py-2.5 transition-colors hover:border-ink/35 ${
         tone === 'dark' ? 'border-ink bg-ink text-white' : 'border-line bg-white'
       }`}
     >
-      <p className={`admin-label ${tone === 'dark' ? 'text-white/50' : 'text-ink/45'}`}>{label}</p>
+      <div className="flex items-start justify-between gap-2">
+        <p className={`admin-label ${tone === 'dark' ? 'text-white/50' : 'text-ink/45'}`}>{label}</p>
+        {Icon && (
+          <Icon
+            aria-hidden="true"
+            size={14}
+            strokeWidth={1.8}
+            className={`mt-0.5 shrink-0 ${tone === 'dark' ? 'text-white/40' : 'text-ink/30'}`}
+          />
+        )}
+      </div>
       <p className="mt-1 font-display text-xl leading-none font-bold tracking-[-0.03em]">
         {value}
       </p>
@@ -84,7 +110,10 @@ function Funnel({ funil }) {
   return (
     <div className="border border-line bg-white p-4 lg:p-5">
       <div className="mb-3 flex items-baseline justify-between gap-3">
-        <h2 className="text-sm font-semibold tracking-[-0.02em]">Funil de conversão</h2>
+        <h2 className="flex items-center gap-1.5 text-sm font-semibold tracking-[-0.02em]">
+          <Filter aria-hidden="true" size={13} strokeWidth={1.8} className="text-ink/40" />
+          Funil de conversão
+        </h2>
         <p className="admin-label text-ink/40">últimos 30 dias</p>
       </div>
       <ul className="space-y-2">
@@ -140,7 +169,10 @@ function Pendentes({ pendentes }) {
   return (
     <div className="border border-line bg-white">
       <div className="flex items-baseline justify-between gap-3 border-b border-line px-4 py-3">
-        <h2 className="text-sm font-semibold tracking-[-0.02em]">Próximas acções</h2>
+        <h2 className="flex items-center gap-1.5 text-sm font-semibold tracking-[-0.02em]">
+          <Inbox aria-hidden="true" size={13} strokeWidth={1.8} className="text-ink/40" />
+          Próximas acções
+        </h2>
         <Link
           to="/candidaturas"
           className="admin-label text-brand-deep hover:text-ink"
@@ -256,18 +288,20 @@ export default function Dashboard() {
 
       {/* Cartões pequenos — KPIs densos */}
       <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-6 lg:gap-3">
-        <Mini label="Online agora" value={cards.online} hint="últimos 3 min" tone="dark" />
+        <Mini label="Online agora" value={cards.online} hint="últimos 3 min" tone="dark" Icon={Activity} />
         <Mini
           label="Submetidas"
           value={cards.submetidas_total}
           hint={`+${cards.submetidas_mes} no mês`}
+          Icon={Send}
         />
-        <Mini label="Por verificar" value={cards.submetidas_estado} hint="estado: nova" />
-        <Mini label="Em análise" value={cards.em_verificacao} hint="em verificação" />
+        <Mini label="Por verificar" value={cards.submetidas_estado} hint="estado: nova" Icon={Search} />
+        <Mini label="Em análise" value={cards.em_verificacao} hint="em verificação" Icon={FileSearch} />
         <Mini
           label="Aprovadas"
           value={cards.aprovadas}
           hint={`${cards.rejeitadas} rejeitadas`}
+          Icon={BadgeCheck}
         />
         <Mini
           label="Conversão"
@@ -277,19 +311,22 @@ export default function Dashboard() {
               : 0
           }%`}
           hint={`${cards.conversao_mes}/${cards.visitantes_mes} no mês`}
+          Icon={TrendingUp}
         />
-        <Mini label="Contas" value={cards.registados_total} hint={`+${cards.registados_mes} no mês`} />
-        <Mini label="WhatsApp" value={cards.whatsapp_mes} hint="últimos 30 dias" />
-        <Mini label="Sem acção" value={cards.sem_accao_mes} hint={`de ${cards.visitantes_mes} vis.`} />
+        <Mini label="Contas" value={cards.registados_total} hint={`+${cards.registados_mes} no mês`} Icon={UserPlus} />
+        <Mini label="WhatsApp" value={cards.whatsapp_mes} hint="últimos 30 dias" Icon={MessageCircle} />
+        <Mini label="Sem acção" value={cards.sem_accao_mes} hint={`de ${cards.visitantes_mes} vis.`} Icon={AlertTriangle} />
         <Mini
           label="Ticket aberto"
           value={pendentes?.length || 0}
           hint="pendentes na fila"
+          Icon={Ticket}
         />
         <Mini
           label="SLA > 7 dias"
           value={pendentes?.filter((p) => p.dias >= 7).length || 0}
           hint="prioridade alta"
+          Icon={Timer}
         />
         <Mini
           label="Média de idade"
@@ -299,6 +336,7 @@ export default function Dashboard() {
               : '—'
           }
           hint="das pendentes"
+          Icon={Hourglass}
         />
       </div>
 
