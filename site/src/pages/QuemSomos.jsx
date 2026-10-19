@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { Section, SectionLabel } from '../components/Section.jsx'
 import { FUNDADORES, WHATSAPP_URL } from '../constants.js'
 import { useConteudo } from '../lib/conteudo.js'
+import { useSeo } from '../lib/seo.jsx'
 
 const PILARES = [
   {
@@ -19,6 +20,13 @@ const PILARES = [
 ]
 
 export default function QuemSomos() {
+  useSeo({
+    titulo: 'Quem somos',
+    descricao:
+      'Conhece a TECNATO: uma plataforma angolana criada para identificar, valorizar e visibilizar o talento nacional — do bairro para o mundo.',
+    caminho: '/quem-somos',
+  })
+
   const conteudo = useConteudo()
   return (
     <>

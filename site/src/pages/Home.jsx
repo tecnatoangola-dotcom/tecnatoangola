@@ -11,8 +11,15 @@ import Participar from '../components/Participar.jsx'
 import Projecto from '../components/Projecto.jsx'
 import ParceirosMarquee from '../components/ParceirosMarquee.jsx'
 import { useConteudo } from '../lib/conteudo.js'
+import { useSeo } from '../lib/seo.jsx'
 
 export default function Home() {
+  useSeo({
+    titulo: 'Talento, Oportunidade e Inovação em Angola',
+    descricao:
+      'TECNATO identifica, valoriza e dá visibilidade a talentos, projectos e iniciativas em Gestão, Administração, Ciência, Inovação, Empreendedorismo e Tecnologia. Candidata o teu projecto e representa o teu município.',
+    caminho: '/',
+  })
   const conteudo = useConteudo()
   return (
     <>

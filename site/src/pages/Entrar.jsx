@@ -1,8 +1,15 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/authContext.js'
+import { useSeo } from '../lib/seo.jsx'
 
 export default function Entrar() {
+  useSeo({
+    titulo: 'Entrar',
+    caminho: '/entrar',
+    noindex: true,
+  })
+
   const { signIn } = useAuth()
   const navigate = useNavigate()
   const [email, setEmail] = useState('')

@@ -8,6 +8,7 @@ import {
 } from '../lib/candidaturas.js'
 import { useAuth } from '../lib/authContext.js'
 import { isSupabaseConfigured, supabase } from '../lib/supabase.js'
+import { useSeo } from '../lib/seo.jsx'
 
 function formatDate(iso) {
   if (!iso) return '—'
@@ -19,6 +20,12 @@ function formatDate(iso) {
 }
 
 export default function Perfil() {
+  useSeo({
+    titulo: 'O meu perfil',
+    caminho: '/perfil',
+    noindex: true,
+  })
+
   const { user, loading, signOut } = useAuth()
   const [rows, setRows] = useState([])
   const [loadError, setLoadError] = useState('')

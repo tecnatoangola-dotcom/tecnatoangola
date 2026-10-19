@@ -2,8 +2,16 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/authContext.js'
 import { track } from '../lib/track.js'
+import { useSeo } from '../lib/seo.jsx'
 
 export default function Registar() {
+  useSeo({
+    titulo: 'Criar conta',
+    descricao: 'Cria a tua conta TECNATO para acompanhar as tuas candidaturas e receber oportunidades.',
+    caminho: '/registar',
+    noindex: true,
+  })
+
   const { signUp } = useAuth()
   const navigate = useNavigate()
   const [nome, setNome] = useState('')

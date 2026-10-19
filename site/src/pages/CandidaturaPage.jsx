@@ -14,6 +14,7 @@ import {
 } from '../lib/candidaturas.js'
 import { isSupabaseConfigured } from '../lib/supabase.js'
 import { fonteVideo, useConteudo } from '../lib/conteudo.js'
+import { useSeo } from '../lib/seo.jsx'
 import { track } from '../lib/track.js'
 
 const MUNICIPIOS = [
@@ -109,6 +110,13 @@ function ChannelChoice({ value, onChange }) {
 }
 
 export default function CandidaturaPage() {
+  useSeo({
+    titulo: 'Candidatura — apresente o teu projecto',
+    descricao:
+      'Submete a tua candidatura em vídeo e fotografia ao TECNATO: gestão, administração, ciência, inovação, empreendedorismo e tecnologia. Sê visto e representa o teu município.',
+    caminho: '/candidatura',
+  })
+
   const { user } = useAuth()
   const conteudo = useConteudo()
   const [somLigado, setSomLigado] = useState(false)
