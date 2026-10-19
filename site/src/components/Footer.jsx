@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { EMAIL, NAV_LINKS, WHATSAPP_NUMBER, WHATSAPP_URL } from '../constants.js'
+import { EMAIL, NAV_LINKS, SITE_URL, WHATSAPP_NUMBER, WHATSAPP_URL } from '../constants.js'
 
 const YEAR = new Date().getFullYear()
 
@@ -98,6 +98,11 @@ export default function Footer() {
                 </a>
               </li>
               <li>Local de arranque: Luanda, Angola</li>
+              <li>
+                <a href={SITE_URL} target="_blank" rel="noreferrer" className="transition-colors hover:text-brand">
+                  tecnatoangola.com
+                </a>
+              </li>
             </ul>
           </div>
         </div>

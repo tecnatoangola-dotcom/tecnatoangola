@@ -8,7 +8,7 @@ export default function Cta() {
         <div className="px-5 py-16 sm:px-8 sm:py-24 lg:col-span-9 lg:px-12">
         <p className="section-label text-ink/60">07 / O convite</p>
         <h2 className="mt-7 max-w-4xl text-5xl leading-[0.9] font-semibold tracking-[-0.065em] sm:text-6xl lg:text-7xl">
-          A próxima grande ideia pode estar mais <em className="editorial-serif font-normal">perto</em> do que imaginas.
+          A próxima grande oportunidade pode estar mais <em className="editorial-serif font-normal">perto</em> do que imaginas.
         </h2>
         <p className="mt-6 max-w-2xl text-base leading-relaxed text-ink/75 sm:text-lg">
           Não sabemos ainda de onde virão todas as ideias. Mas acreditamos que vale a pena criar um
@@ -40,7 +40,7 @@ export default function Cta() {
         </div>
         <div className="hidden border-l border-ink/20 p-7 lg:flex lg:col-span-3 lg:flex-col lg:justify-between">
           <p className="font-mono text-[10px] tracking-[0.14em] uppercase text-ink/55">Inscrições abertas</p>
-          <p className="text-3xl leading-none font-semibold tracking-[-0.05em]">Há uma ideia à tua espera.</p>
+          <p className="text-3xl leading-none font-semibold tracking-[-0.05em]">Há uma oportunidade à tua espera.</p>
         </div>
       </div>
     </section>

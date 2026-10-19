@@ -1,10 +1,12 @@
 export const WHATSAPP_NUMBER = '244935073125'
 
+export const SITE_URL = 'https://tecnatoangola.com/'
+
 export const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
   'Olá! Quero apresentar o meu projecto ao TECNATO.',
 )}`
 
-export const EMAIL = 'ceo@garcian.co.ao'
+export const EMAIL = 'suporte@tecnatoangola.com'
 
 export const NAV_LINKS = [
   { href: '/#projecto', label: 'O projecto' },

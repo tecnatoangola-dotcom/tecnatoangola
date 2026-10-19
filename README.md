@@ -35,7 +35,7 @@ cd admin; npm install; npm run dev
 1. **Site TECNATO**
    - *Base directory:* `site`
    - Build: `npm run build` · Publish: `dist` (lidos do `site/netlify.toml`)
-   - Env vars: `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_SUPABASE_BUCKET=candidaturas`, `VITE_MAX_VIDEO_MB=30`
+   - Env vars: `SUPABASE_URL`, `SUPABASE_SERVICE_KEY` (conteúdo do site via `/api/conteudo`), `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_SUPABASE_BUCKET=candidaturas`, `VITE_MAX_VIDEO_MB=30`
 2. **Admin CRM**
    - *Base directory:* `admin`
    - Build: `npm run build` · Publish: `dist` · Functions: `netlify/functions`
@@ -46,7 +46,7 @@ cd admin; npm install; npm run dev
 
 - O CRM tem a aba **Site** (5 sub-abas: Hero, Galeria, Candidatura, Quem somos, Parceiros) para editar textos, fotos e o vídeo da página de candidatura sem tocar no código.
 - Conteúdo guardado na tabela Supabase `site_conteudo` (RLS com leitura pública; escrita só via *service key* da API admin) e ficheiros no bucket público `site` (setup: `node admin/scripts/setup-site-conteudo.mjs`).
-- O site lê o conteúdo com a anon key e cai nos valores por omissão (`site/src/lib/conteudo.js`) se a BD estiver vazia ou o Supabase não estiver configurado.
+- O site lê o conteúdo em `GET /api/conteudo` — function Netlify em produção e middleware do Vite em dev — que consulta a tabela com a `SUPABASE_SERVICE_KEY` (variáveis `SUPABASE_URL` + `SUPABASE_SERVICE_KEY` no `site/.env` e no Netlify). O browser nunca vê a chave e a anon key **não** é necessária para o conteúdo; cai nos valores por omissão (`site/src/lib/conteudo.js`) se a chamada falhar.
 
 ## Segurança
 
