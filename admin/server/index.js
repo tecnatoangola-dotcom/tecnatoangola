@@ -787,7 +787,8 @@ app.get(/^(?!\/api).*/, (_req, res, next) => {
   })
 })
 
-if (!process.env.NETLIFY) {
+// Sem escuta em serverless (Netlify/Vercel) — o runtime trata das requisições.
+if (!process.env.NETLIFY && !process.env.VERCEL) {
   app.listen(PORT, () => {
     console.log(`[TECNATO-ADMIN] API em http://localhost:${PORT}`)
     console.log(`[TECNATO-ADMIN] service key: ${sb ? 'OK' : 'EM FALTA'}`)
