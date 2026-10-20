@@ -40,7 +40,11 @@ export function AuthProvider({ children }) {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { nome } },
+        options: {
+          data: { nome },
+          // em produção o domínio é o mesmo; em dev a origem do localhost
+          emailRedirectTo: `${window.location.origin}/confirmacao`,
+        },
       })
       if (error) throw error
       return data

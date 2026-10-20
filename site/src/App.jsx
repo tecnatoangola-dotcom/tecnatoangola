@@ -8,6 +8,7 @@ import { AuthProvider } from './lib/auth.jsx'
 import { ConteudoProvider } from './lib/conteudo.jsx'
 import { track, trackOnce } from './lib/track.js'
 import CandidaturaPage from './pages/CandidaturaPage.jsx'
+import Confirmacao from './pages/Confirmacao.jsx'
 import Entrar from './pages/Entrar.jsx'
 import Home from './pages/Home.jsx'
 import Perfil from './pages/Perfil.jsx'
@@ -42,6 +43,7 @@ export default function App() {
                 <Route path="/entrar" element={<Entrar />} />
                 <Route path="/registar" element={<Registar />} />
                 <Route path="/perfil" element={<Perfil />} />
+                <Route path="/confirmacao" element={<Confirmacao />} />
               </Routes>
             </main>
             <Footer />
