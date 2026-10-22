@@ -91,6 +91,13 @@ export default function Entrar() {
         </button>
       </form>
 
+      <p className="mt-4 text-center text-sm text-ink/65">
+        Esqueceste a palavra-passe?{' '}
+        <Link to="/recuperar" className="font-semibold text-ink underline underline-offset-2">
+          Recuperar aqui
+        </Link>
+      </p>
+
       <p className="mt-5 text-center text-sm text-ink/65">
         Ainda não tens conta?{' '}
         <Link to="/registar" className="font-semibold text-ink underline underline-offset-2">

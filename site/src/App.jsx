@@ -14,6 +14,8 @@ import Home from './pages/Home.jsx'
 import Perfil from './pages/Perfil.jsx'
 import PoliticaPrivacidade from './pages/PoliticaPrivacidade.jsx'
 import QuemSomos from './pages/QuemSomos.jsx'
+import Recuperar from './pages/Recuperar.jsx'
+import Redefinir from './pages/Redefinir.jsx'
 import Registar from './pages/Registar.jsx'
 
 function Analytics() {
@@ -45,6 +47,8 @@ export default function App() {
                 <Route path="/entrar" element={<Entrar />} />
                 <Route path="/registar" element={<Registar />} />
                 <Route path="/perfil" element={<Perfil />} />
+                <Route path="/recuperar" element={<Recuperar />} />
+                <Route path="/redefinir" element={<Redefinir />} />
                 <Route path="/confirmacao" element={<Confirmacao />} />
               </Routes>
             </main>

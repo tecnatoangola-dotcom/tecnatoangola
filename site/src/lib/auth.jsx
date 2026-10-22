@@ -54,6 +54,21 @@ export function AuthProvider({ children }) {
       await supabase.auth.signOut()
     }
 
+    async function resetPassword({ email }) {
+      const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+        // o link de recuperação cai na página dedicada de redefinição
+        redirectTo: `${window.location.origin}/redefinir`,
+      })
+      if (error) throw error
+      return data
+    }
+
+    async function updatePassword({ password }) {
+      const { data, error } = await supabase.auth.updateUser({ password })
+      if (error) throw error
+      return data
+    }
+
     return {
       session,
       user: session?.user ?? null,
@@ -61,6 +76,8 @@ export function AuthProvider({ children }) {
       signIn,
       signUp,
       signOut,
+      resetPassword,
+      updatePassword,
     }
   }, [session, loading])
 
