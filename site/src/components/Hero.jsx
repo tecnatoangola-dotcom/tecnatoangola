@@ -17,7 +17,7 @@ export default function Hero() {
           <div className="hero-reveal relative">
             <p className="section-label flex items-center gap-3 text-ink/55">
               <span className="animate-soft-pulse h-1.5 w-1.5 bg-brand" />
-              01 / plataforma para talentos — Luanda, Angola
+              plataforma para talentos — Luanda, Angola
             </p>
             <h1 className="mt-10 max-w-4xl text-[3.25rem] leading-[0.88] font-semibold tracking-[-0.07em] sm:text-7xl lg:text-[7.4rem]">
               A luz para os <em className="editorial-serif font-normal tracking-[-0.04em]">génios</em> da banda.

@@ -29,7 +29,7 @@ export default function Candidatura() {
   return (
     <Section
       id="candidatura"
-      index="06"
+      icone="documento"
       label="Candidatura"
       title="Tens um projecto? Este convite é para ti."
       intro="Não esperes que o teu projecto esteja presente em todo o lado para começares a falar dele. Prepara uma apresentação clara e mostra-nos o teu trabalho."

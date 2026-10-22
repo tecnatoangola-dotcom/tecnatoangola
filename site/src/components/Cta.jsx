@@ -1,12 +1,16 @@
 import { Link } from 'react-router-dom'
 import { WHATSAPP_URL } from '../constants.js'
+import { Icone } from './Icones.jsx'
 
 export default function Cta() {
   return (
     <section className="border-t border-line bg-brand">
       <div className="mx-auto grid max-w-[1440px] border-x border-ink/20 lg:grid-cols-12">
         <div className="px-5 py-16 sm:px-8 sm:py-24 lg:col-span-9 lg:px-12">
-        <p className="section-label text-ink/60">07 / O convite</p>
+        <p className="section-label flex items-center gap-3 text-ink/60">
+          <Icone nome="megafone" className="h-4 w-4" />
+          O convite
+        </p>
         <h2 className="mt-7 max-w-4xl text-5xl leading-[0.9] font-semibold tracking-[-0.065em] sm:text-6xl lg:text-7xl">
           A próxima grande oportunidade pode estar mais <em className="editorial-serif font-normal">perto</em> do que imaginas.
         </h2>

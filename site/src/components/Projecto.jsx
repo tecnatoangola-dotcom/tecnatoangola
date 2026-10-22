@@ -1,3 +1,4 @@
+import { Icone } from './Icones.jsx'
 import { Section } from './Section.jsx'
 
 const VALUES = [
@@ -9,11 +10,13 @@ const VALUES = [
   ['Integridade', 'Transparência, respeito, critérios claros e credibilidade na condução da plataforma.'],
 ]
 
+const ICONES_VALORES = ['pessoas', 'estrela', 'centelha', 'livro', 'escudo', 'olho']
+
 export default function Projecto() {
   return (
     <Section
       id="projecto"
-      index="01"
+      icone="alvo"
       label="O projecto"
       title="E se o próximo génio de Angola estiver no teu bairro?"
       intro="Em cada bairro, musseque, município, escola ou universidade existem jovens com capacidades extraordinárias — mas poucos têm um palco para as mostrar. O TECNATO nasce para mudar isso."
@@ -53,10 +56,8 @@ export default function Projecto() {
         <ul className="mt-5 grid border-y border-line sm:grid-cols-2 lg:grid-cols-3">
           {VALUES.map(([title, text], index) => (
             <li key={title} className="border-r border-b border-line p-6 last:border-b-0 sm:[&:nth-child(2)]:border-r-0 lg:[&:nth-child(2)]:border-r lg:[&:nth-child(3n)]:border-r-0 lg:[&:nth-child(n+4)]:border-b-0">
-              <div className="flex items-baseline gap-3">
-                <span className="font-mono text-[10px] font-medium tracking-wider text-brand-deep">
-                  {String(index + 1).padStart(2, '0')}
-                </span>
+              <div className="flex items-center gap-3">
+                <Icone nome={ICONES_VALORES[index]} className="h-4 w-4 shrink-0 text-brand-deep" />
                 <h3 className="text-base font-semibold">{title}</h3>
               </div>
               <p className="mt-2 text-sm leading-relaxed text-ink/65">{text}</p>

@@ -27,7 +27,7 @@ export default function ComoFunciona() {
   return (
     <Section
       id="como-funciona"
-      index="03"
+      icone="passos"
       label="Como funciona"
       title="Cinco fases, um objectivo: mostrar o que estás a construir."
       intro="Um processo organizado de apresentação, acompanhamento e competição — do primeiro vídeo ao reconhecimento final."

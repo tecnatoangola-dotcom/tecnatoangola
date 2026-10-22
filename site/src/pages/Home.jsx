@@ -12,6 +12,7 @@ import Projecto from '../components/Projecto.jsx'
 import ParceirosMarquee from '../components/ParceirosMarquee.jsx'
 import { useConteudo } from '../lib/conteudo.js'
 import { useSeo } from '../lib/seo.jsx'
+import { Icone } from '../components/Icones.jsx'
 
 export default function Home() {
   useSeo({
@@ -32,7 +33,10 @@ export default function Home() {
       <section id="parceiros" className="scroll-mt-16 border-t border-line bg-paper">
         <div className="mx-auto max-w-[1440px] border-x border-line px-5 py-16 sm:px-8 sm:py-20 lg:px-12">
           <div className="grid gap-6 lg:grid-cols-12">
-            <p className="section-label text-brand-deep lg:col-span-2">03 / Parceiros</p>
+            <p className="section-label flex items-center gap-3 text-brand-deep lg:col-span-2">
+              <Icone nome="globo" className="h-4 w-4" />
+              Parceiros
+            </p>
             <div className="lg:col-span-7">
               <h2 className="text-4xl leading-[0.95] font-semibold tracking-[-0.055em] sm:text-5xl">{conteudo.parceiros.titulo_normal} <em className="editorial-serif font-normal">{conteudo.parceiros.titulo_acento}</em></h2>
               <p className="mt-5 max-w-xl text-base leading-relaxed text-ink/70">{conteudo.parceiros.subtitulo}</p>

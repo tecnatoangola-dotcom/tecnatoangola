@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { Icone } from '../components/Icones.jsx'
 import { Section, SectionLabel } from '../components/Section.jsx'
 import { FUNDADORES, WHATSAPP_URL } from '../constants.js'
 import { useConteudo } from '../lib/conteudo.js'
@@ -19,6 +20,8 @@ const PILARES = [
   },
 ]
 
+const ICONES_PILARES = ['olho', 'crescente', 'pessoas']
+
 export default function QuemSomos() {
   useSeo({
     titulo: 'Quem somos',
@@ -32,7 +35,7 @@ export default function QuemSomos() {
     <>
       <section className="border-b border-line bg-paper">
         <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8 sm:py-24">
-          <SectionLabel index="00">Quem somos</SectionLabel>
+          <SectionLabel icone="pessoas">Quem somos</SectionLabel>
           <h1 className="mt-6 max-w-3xl text-4xl leading-[1.05] font-bold sm:text-5xl lg:text-6xl">
             A luz para os <span className="text-brand-deep">génios</span> da banda.
           </h1>
@@ -47,7 +50,7 @@ export default function QuemSomos() {
 
       <Section
         label="A nossa história"
-        index="01"
+        icone="livro"
         title="Do bairro para o mundo — com trabalho e tecnologia."
         intro="O TECNATO nasceu de uma constatação simples: Angola tem génios em todos os cantos, mas falta a luz que os ilumina. Construímos essa luz."
       >
@@ -57,7 +60,9 @@ export default function QuemSomos() {
               key={pilar.titulo}
               className="rounded-2xl border border-line bg-white p-6"
             >
-              <p className="section-label text-brand-deep">0{i + 1}</p>
+              <span className="section-label flex items-center text-brand-deep">
+                <Icone nome={ICONES_PILARES[i]} className="h-4 w-4" />
+              </span>
               <h3 className="mt-3 text-xl font-bold">{pilar.titulo}</h3>
               <p className="mt-2 text-sm leading-relaxed text-ink/70">{pilar.texto}</p>
             </div>
@@ -67,7 +72,7 @@ export default function QuemSomos() {
 
       <Section
         label="Fundadores"
-        index="02"
+        icone="estrela"
         title={conteudo.quem_somos.titulo}
         tone="dark"
         intro={conteudo.quem_somos.intro}

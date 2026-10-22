@@ -1,3 +1,4 @@
+import { Icone } from './Icones.jsx'
 import { Section } from './Section.jsx'
 
 const WHO = [
@@ -22,11 +23,13 @@ const BENEFITS = [
   ['Entretenimento', 'Acompanha debates e conteúdos que despertam curiosidade e pensamento crítico.'],
 ]
 
+const ICONES_BENEFITS = ['olho', 'passos', 'livro', 'estrela', 'crescente', 'globo', 'coracao', 'centelha']
+
 export default function Participar() {
   return (
     <Section
       id="participar"
-      index="04"
+      icone="megafone"
       label="Quem pode participar"
       title="Se tens uma equipa e algo relevante para mostrar, queremos conhecer o teu trabalho."
       intro="Não precisa de ser uma grande empresa nem estar totalmente desenvolvido. Basta uma equipa, uma proposta identificável e vontade de apresentar o trabalho com clareza."
@@ -35,9 +38,9 @@ export default function Participar() {
         <div className="lg:col-span-5">
           <p className="section-label text-ink/50">Podes participar se…</p>
           <ul className="mt-5 border-t border-line">
-            {WHO.map((item, index) => (
+            {WHO.map((item) => (
               <li key={item} className="flex items-start gap-3 border-b border-line py-3.5 text-sm text-ink/75">
-                <span className="font-mono text-[10px] tracking-wider text-brand-deep">{String(index + 1).padStart(2, '0')}</span>
+                <Icone nome="visto" className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-deep" />
                 {item}
               </li>
             ))}
@@ -49,7 +52,7 @@ export default function Participar() {
           <ul className="mt-5 grid border border-line sm:grid-cols-2">
             {BENEFITS.map(([title, text], index) => (
               <li key={title} className="border-r border-b border-line p-5 sm:[&:nth-child(2n)]:border-r-0 sm:[&:nth-child(n+7)]:border-b-0">
-                <span className="font-mono text-[10px] tracking-wider text-brand-deep">{String(index + 1).padStart(2, '0')}</span>
+                <Icone nome={ICONES_BENEFITS[index]} className="h-4 w-4 shrink-0 text-brand-deep" />
                 <h3 className="mt-3 text-base font-semibold">{title}</h3>
                 <p className="mt-1.5 text-sm leading-relaxed text-ink/65">{text}</p>
               </li>

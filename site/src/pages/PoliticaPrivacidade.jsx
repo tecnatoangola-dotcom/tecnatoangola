@@ -203,7 +203,7 @@ export default function PoliticaPrivacidade() {
             ← Início
           </Link>
           <div className="mt-8">
-            <SectionLabel index="§">Transparência</SectionLabel>
+            <SectionLabel icone="escudo">Transparência</SectionLabel>
           </div>
           <h1 className="mt-6 max-w-3xl text-4xl leading-[1.05] font-bold sm:text-5xl">
             Política de privacidade, confidencialidade e <span className="text-brand-deep">protecção</span> de projectos e participantes.

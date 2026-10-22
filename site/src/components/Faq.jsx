@@ -43,7 +43,7 @@ export default function Faq() {
   return (
     <Section
       id="faq"
-      index="07"
+      icone="interro"
       label="Perguntas frequentes"
       title="Tudo o que precisas de saber antes de te candidatares."
       intro="Respostas directas às dúvidas mais comuns das equipas que querem fazer parte do TECNATO."

@@ -1,3 +1,4 @@
+import { Icone } from './Icones.jsx'
 import { Section } from './Section.jsx'
 
 const IMPACT = [
@@ -15,18 +16,16 @@ export default function Impacto() {
   return (
     <Section
       id="impacto"
-      index="05"
+      icone="centelha"
       label="O impacto"
       tone="dark"
       title="Luanda é o começo. Angola é o horizonte."
       intro="O talento não existe apenas nos lugares onde é mais visível. Existe em comunidades com poucos recursos, em oficinas, em salas de aula e em quem aprendeu a criar soluções através da experiência."
     >
       <ul className="mt-12 grid border border-white/15 sm:grid-cols-2">
-        {IMPACT.map((item, index) => (
+        {IMPACT.map((item) => (
           <li key={item} className="flex items-start gap-4 border-r border-b border-white/15 p-5 last:border-b-0 sm:p-6">
-            <span className="font-mono text-[10px] font-medium tracking-wider text-brand">
-              {String(index + 1).padStart(2, '0')}
-            </span>
+            <Icone nome="centelha" className="mt-0.5 h-3 w-3 shrink-0 text-brand" />
             <span className="text-sm leading-relaxed text-white/75">{item}</span>
           </li>
         ))}
