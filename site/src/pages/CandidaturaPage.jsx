@@ -791,9 +791,18 @@ export default function CandidaturaPage() {
                   onChange={(event) => setValue('consent', event.target.checked)}
                   className="mt-0.5 h-5 w-5 shrink-0 accent-brand"
                 />
-                Autorizo a organização do TECNATO a tratar os meus dados e o vídeo para efeitos de
-                candidatura e divulgação da plataforma. *
+                <span>
+                  Autorizo a organização do TECNATO a tratar os meus dados e o vídeo para efeitos de
+                  candidatura e divulgação da plataforma. *
+                </span>
               </label>
+              <p className="mt-1.5 text-xs text-ink/60">
+                Ao autorizar, reconheço os termos da{' '}
+                <Link to="/politica-de-privacidade" className="font-semibold underline underline-offset-2 hover:text-ink">
+                  Política de privacidade e protecção de projectos
+                </Link>
+                .
+              </p>
               {errors.consent && <p className="mt-1.5 text-xs text-red-600">{errors.consent}</p>}
             </div>
           </div>

@@ -108,7 +108,12 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-white/45 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {YEAR} TECNATO — A luz para os génios da banda.</p>
+          <p>
+            © {YEAR} TECNATO — A luz para os génios da banda.{' '}
+            <Link to="/politica-de-privacidade" className="underline decoration-white/30 underline-offset-4 transition-colors hover:text-brand">
+              Política de privacidade
+            </Link>
+          </p>
           <p className="tracking-[0.18em] uppercase">Dos bairros às universidades · De Luanda para Angola</p>
         </div>
       </div>

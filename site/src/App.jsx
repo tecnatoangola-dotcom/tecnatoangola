@@ -12,6 +12,7 @@ import Confirmacao from './pages/Confirmacao.jsx'
 import Entrar from './pages/Entrar.jsx'
 import Home from './pages/Home.jsx'
 import Perfil from './pages/Perfil.jsx'
+import PoliticaPrivacidade from './pages/PoliticaPrivacidade.jsx'
 import QuemSomos from './pages/QuemSomos.jsx'
 import Registar from './pages/Registar.jsx'
 
@@ -40,6 +41,7 @@ export default function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/candidatura" element={<CandidaturaPage />} />
                 <Route path="/quem-somos" element={<QuemSomos />} />
+                <Route path="/politica-de-privacidade" element={<PoliticaPrivacidade />} />
                 <Route path="/entrar" element={<Entrar />} />
                 <Route path="/registar" element={<Registar />} />
                 <Route path="/perfil" element={<Perfil />} />
