@@ -1,0 +1,9 @@
+{
+  "name": "tecnato-site",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Site publico TECNATO - dist ja compilado localmente; o Netlify so publica.",
+  "scripts": {
+    "build": "echo build-ok"
+  }
+}

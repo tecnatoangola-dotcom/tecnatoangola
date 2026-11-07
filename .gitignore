@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# Excecao: deploy-site/dist TEM de ser versionado (site ja compilado para o Netlify)
+!deploy-site/dist/
+!deploy-site/dist/**
+
 # Segredos / credenciais — nunca commitar
 .env
 .env.*
