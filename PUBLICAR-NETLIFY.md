@@ -1,78 +1,73 @@
-# Publicar no Netlify — passo a passo
+# Publicar no Netlify — procedimento definitivo (TECNATO)
 
-> Os valores das variáveis de ambiente estão em `publicar/ENV-NETLIFY.txt` (ficheiro local, fora do git, porque tem segredos).
+> **Última atualização: 2026-11-07.** Este é o procedimento que **funciona** (validado em produção).
+> Documentos antigos com "Caminhos 1/2/3" foram removidos — causavam confusão.
 
-## Estrutura das pastas prontas a publicar
+## A única forma de publicar (arrastar)
 
-`publicar/` fica **fora do git** (tem segredos). Dentro há duas pastas, uma para cada site Netlify:
+**Site principal (tecnatoangola.com) — arrastar SÓ esta pasta:**
 
 ```
-publicar/site/            → site principal (tecnatoangola.com)
-├── dist/                 site já compilado (o que o Netlify publica)
-├── netlify/functions/    function /api/conteudo (conteúdo do CRM)
-├── netlify.toml          redirects + headers + CSP
-├── package.json          build sem efeito ("echo build-ok")
-└── .gitignore            garante que o dist é versionado
-
-publicar/admin/           → CRM (admin.tecnatoangola.com)
-├── dist/                 interface do CRM já compilada
-├── netlify/functions/    api.mjs (API Express completa, já embutida)
-├── netlify.toml
-├── package.json
-└── .gitignore
+publicar/SITE-NETLIFY-ARRASTAR/
+├── index.html, assets/, images/, logo/ ...  ← site compilado NA RAIZ (sem pasta dist)
+├── sw.js, manifest.webmanifest, registerSW.js
+├── netlify/functions/conteudo.mjs            ← API /api/conteudo (contém o CRM)
+├── netlify/functions/ai-chat.mjs             ← API /api/ai-chat (Tecnocrata)
+└── netlify.toml                              ← publish = ".", SEM comando de build
 ```
 
-## Caminho 1 — GitHub (recomendado, actualizações automáticas)
+⚠️ **Não arrastes** `site/` (código-fonte), `publicar/site/` (tem `npm run build` + `publish = dist` → dá o erro `Deploy directory 'dist' does not exist`), `publicar/site-drop/` (legado, sem functions) nem `deploy-site/`.
 
-1. Cria **dois repositórios** GitHub (um para o site, outro para o admin).
-2. Copia **todo o conteúdo** de `publicar/site` para o repo do site (e de `publicar/admin` para o do admin).
-   - ⚠️ O `dist/` **tem de ir** para o repo. Se o `.gitignore` da raiz o estiver a ignorar, força com:
-     ```bash
-     git add -A -f .
-     git commit -m "dist compilado + package.json"
-     git push
-     ```
-   - Confirma com `git ls-files dist` (tem de listar ficheiros).
-3. No Netlify: **Add new site → Import an existing project** → escolhe o repo. Sem *Base directory*.
-4. Adiciona as variáveis de ambiente (ver `publicar/ENV-NETLIFY.txt`):
-   - Equipa → **Environment variables** (partilhadas): `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `SUPABASE_BUCKET`, `SUPABASE_BUCKET_PERFIS`, `NODE_ENV`, `VITE_*`.
-   - Site do admin → **Site settings → Environment variables**: `ADMIN_SECRET`, `ADMIN_USERS`, `ADMIN_ORIGIN`.
-5. Testa: `https://<dominio>/api/health` → `{"ok":true,"service":true,"admins":2}`.
+**Passos:**
+1. Abre https://app.netlify.com/drop e arrasta a pasta `publicar/SITE-NETLIFY-ARRASTAR` **inteira, de uma vez** (não abras, não copies ficheiro a ficheiro).
+2. Espera "Published".
+3. Cola as variáveis (ver `publicar/ENV-NETLIFY-CHECKLIST.md`) em **Site settings → Environment variables**.
+4. **Arrasta a pasta outra vez** — no Drop é o arrastar que aplica as variáveis novas (não há "Trigger deploy" no Drop).
 
-### Erros já vistos (e a causa)
+**Admin (CRM) — arrastar SÓ esta pasta:**
 
-| Erro | Causa | Solução |
+```
+publicar/ADMIN-NETLIFY-ARRASTAR/
+├── index.html, assets/ ...  ← interface compilada NA RAIZ
+├── netlify/functions/api.mjs  ← API completa (Express) em 1 ficheiro único
+├── netlify.toml               ← publish = ".", redirect /api/* → function
+└── (domínio: https://tecnatoangolaadmin005.netlify.app/)
+```
+
+Mesmos passos: arrastar inteira → colar variáveis do admin → arrastar de novo.
+Sem isto, o login dá **404 em `/api/login`** ("Credenciais inválidas") porque a
+função não foi publicada — as credenciais estão certas, falta a API.
+Se der **502**, a função está a crashar: ou era o `import.meta.url` no bundle
+(já corrigido no `server/index.js` com fallback para `process.cwd()`), ou faltam
+variáveis de segurança no Netlify (`ADMIN_SECRET`, `ADMIN_USERS`,
+`ADMIN_ORIGIN`, `SUPABASE_*`) — o servidor recusa arrancar em produção sem elas.
+
+> Nota: a `api.mjs` desta pasta é o bundle esbuild de
+> `admin/netlify/functions/api.mjs` + `admin/server/index.js` (Express, Supabase,
+> ExcelJS dentro de 1 ficheiro) — não editar à mão. Refazer com:
+> `npx esbuild admin/netlify/functions/api.mjs --bundle --platform=node --format=esm --outfile=publicar/ADMIN-NETLIFY-ARRASTAR/netlify/functions/api.mjs`
+
+## Variáveis para colar (resumo)
+
+**Site:** `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `NVIDIA_API_KEY`, `NVIDIA_MODEL`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_SUPABASE_BUCKET=candidaturas`, `VITE_MAX_VIDEO_MB=30`, `NODE_ENV=production`
+
+**Admin:** `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `SUPABASE_BUCKET`, `SUPABASE_BUCKET_PERFIS`, `ADMIN_SECRET`, `ADMIN_USERS` (JSON completo), `ADMIN_ORIGIN=https://tecnatoangolaadmin005.netlify.app`, `ADMIN_AI_API_KEY`, `ADMIN_AI_MODEL`, `NODE_ENV=production`
+
+Lista completa com testes: `publicar/ENV-NETLIFY-CHECKLIST.md`.
+
+## Erros que NÃO devemos repetir
+
+| Sintoma | Causa | Fix |
 |---|---|---|
-| `Could not read package.json` | repo sem `package.json` na raiz | já resolvido (o `package.json` veio com a pasta) |
-| `Deploy directory 'dist' does not exist` | o `dist/` ficou de fora do repo (ignorado) | `git add -A -f .` para versionar o `dist` |
-| `Build script returned non-zero exit code: 2` | script de build com caracteres especiais | o build é agora `echo build-ok` (ASCII puro) |
+| `Deploy directory 'dist' does not exist` | `netlify.toml` com `publish = dist` + `npm run build` ao arrastar | Usar pasta com site **na raiz** e `publish = "."`, sem build |
+| `npm run build` corrói em "echo build-ok" e depois falha no publish | Pasta `publicar/site` arrastada — tem `package.json` de build | Não usar `publicar/site` para arrastar |
+| Imagens partidas no site publicado | SW (PWA) cacheava imagens Cloudinary com respostas em erro (`CacheFirst` + status 0) | Removido caching de terceiros no SW; `main.jsx` em PROD apaga caches legadas |
+| Site branco ao atualizar | SW "fantasma" servia `index.html`/assets antigos | `main.jsx`: SW só em PROD; em dev apaga SWs e caches |
+| Bundle de dev em produção (site lento/grande) | `NODE_ENV=development` no shell → `npm run build` gerava `jsxDEV`, `PROD=false` | `vite.config.js` força `NODE_ENV=production` no build (site e admin) |
+| Chat Tecnocrata: `currentInput is not defined` | `AISupport.jsx` usava `currentInput` em vez de `texto` | Corrigido para `message: texto` |
+| `/api/conteudo` 404 | Deploy desatualizado (function não incluída) | Arrastar pasta com `netlify/functions/conteudo.mjs` |
 
-## Caminho 2 — Arrastar (sem build nenhum)
+## Atualizar depois
 
-1. Apaga o sítio que falhou e arrasta `publicar/site/dist` em <https://app.netlify.com/drop>.
-2. ⚠️ Arrastar só o `dist` **perde a function** `/api/conteudo` (o conteúdo do CRM deixa de aparecer).
-   Arrasta a pasta `publicar/site` inteira — o Netlify publica o `dist` indicado no `netlify.toml`.
-3. Repete para o admin com `publicar/admin`.
-
-## Caminho 3 — Repositório completo (para mexer no código)
-
-Liga o repositório completo (`E:\Tecnato\repo`) e define em cada sítio:
-**Site settings → Build & deploy → Build → Base directory** = `site` (site principal) ou `admin` (CRM).
-O Netlify lê o `netlify.toml` dessa pasta e compila tudo (com as `VITE_*` do ambiente).
-
-## Variáveis de ambiente que "não funcionam"
-
-| Sintoma | Causa | Solução |
-|---|---|---|
-| As variáveis foram guardadas mas nada muda | As functions só recebem as variáveis **no deploy seguinte** | Netlify → **Deploys → Trigger deploy → Clear cache and deploy site** |
-| O CRM não carrega (erro de rede/CORS) | `ADMIN_ORIGIN` não é a origem exacta do site do admin | `ADMIN_ORIGIN=https://<admin>.netlify.app,https://admin.tecnatoangola.com` (aceita várias, separadas por vírgula) |
-| O site não mostra o vídeo/texto do CRM | `/api/conteudo` não devolve JSON | Testa `https://<site>.netlify.app/api/conteudo` — se devolver HTML, a function não foi publicada |
-| O domínio mostra "Parked Domain" | O DNS ainda aponta para o parque da Hostinger | Domain management → Add custom domain → seguir os registos DNS que o Netlify dá |
-
-Diagnóstico rápido do admin: `https://<admin>.netlify.app/api/diagnostico`
-(devolve `origens_permitidas`, `admin_secret_ok`, `supabase_ok`, `n_admins` — **sem revelar segredos**).
-
-## Actualizar depois
-
-- **Textos, fotos, vídeo**: nada de deploy — edita na aba **Site** do CRM (o site lê em `/api/conteudo`).
-- **Código**: `npm run build` em `site/` e `admin/`, copia de novo as `dist` para `publicar/*/dist` e faz push (o Netlify redesenha sozinho).
+- **Textos, fotos, vídeo**: nada de deploy — edita na aba **Site** do CRM (`/api/conteudo`).
+- **Código**: `npm run build` em `site/` e `admin/` (com `NODE_ENV=production`), copia o `dist` para `publicar/SITE-NETLIFY-ARRASTAR/` (substituir tudo), arrasta de novo para https://app.netlify.com/drop.

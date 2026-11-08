@@ -31,7 +31,7 @@ registra('candidaturas SELECT (anon)', lida.ok, `HTTP ${lida.status}`)
 // 3) INSERT como o site faz (return=minimal — sem RETURNING)
 const ref = 'VERIF-' + Date.now().toString(36).toUpperCase()
 const corpo = {
-  referencia: ref, equipa: 'x', projecto: 'x', municipio: 'Luanda', area: 'x',
+  referencia: ref, equipa: 'x', projecto: 'x', municipio: 'Ingombotas', area: 'x',
   whatsapp: '935000000', email: 'teste@tecnato.com', descricao: 'linha de teste — apagada no fim',
   video_path: 'candidaturas/verif/video.mp4', foto_path: 'candidaturas/verif/foto.png', status: 'submetida',
 }

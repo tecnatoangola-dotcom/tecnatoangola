@@ -1,4 +1,4 @@
-/* Netlify redirects for SPA + API functions */
+# Netlify redirects for SPA + API functions
 # API Functions
 /api/conteudo  /.netlify/functions/conteudo  200
 /api/ai-chat   /.netlify/functions/ai-chat   200

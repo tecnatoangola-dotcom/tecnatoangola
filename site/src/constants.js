@@ -9,28 +9,13 @@ export const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURICo
 export const EMAIL = 'suporte@tecnatoangola.com'
 
 export const NAV_LINKS = [
-  { href: '/#projecto', label: 'O projecto' },
-  { href: '/#areas', label: 'Áreas' },
-  { href: '/#como-funciona', label: 'Como funciona' },
-  { href: '/#participar', label: 'Participar' },
+  { href: '/projecto', label: 'O projecto' },
+  { href: '/areas', label: 'Áreas' },
+  { href: '/como-funciona', label: 'Como funciona' },
+  { href: '/participar', label: 'Participar' },
   { href: '/candidatura', label: 'Candidatura' },
   { href: '/quem-somos', label: 'Quem somos' },
-  { href: '/#faq', label: 'FAQ' },
-]
-
-export const FUNDADORES = [
-  {
-    nome: 'Garcia Manuel',
-    cargo: 'CEO e Fundador do TECNATO',
-    foto: '/images/garcia-retrato.png',
-    bio: 'Lidera a visão e a estratégia do TECNATO. Acredita que o talento angolano existe em todos os bairros e que só falta uma luz para o mundo o ver.',
-  },
-  {
-    nome: 'Elias Sebastião',
-    cargo: 'CTO & Co-Fundador do TECNATO',
-    foto: '/images/elias-retrato.png',
-    bio: 'Cuida da operação e da tecnologia da plataforma. Do primeiro código ao painel que liga talentos a oportunidades, faz parte da construção diária do TECNATO.',
-  },
+  { href: '/faq', label: 'FAQ' },
 ]
 
 export const PARCEIROS = [

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
 import { useConteudo } from '../lib/conteudo.js'
 
 const HIGHLIGHTS = [
@@ -9,6 +10,41 @@ const HIGHLIGHTS = [
 
 export default function Hero() {
   const conteudo = useConteudo()
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [isHovered, setIsHovered] = useState(false)
+  const intervalRef = useRef(null)
+
+  // Imagens para rotação: hero principal + galeria
+  const rotationImages = useRef([
+    { src: conteudo.hero.imagem, alt: conteudo.hero.alt },
+    ...(conteudo.galeria.imagens || []).map((img) => ({ src: img.src, alt: img.alt })),
+  ]).current
+
+  // Se rotação desligada, usa só a imagem principal
+  const shouldRotate = conteudo.hero.rotacao === true
+
+  // Avança para a próxima imagem
+  const nextImage = () => {
+    setCurrentIndex((prev) => (prev + 1) % rotationImages.length)
+  }
+
+  // Inicia/para o intervalo
+  useEffect(() => {
+    if (!shouldRotate || isHovered) {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+        intervalRef.current = null
+      }
+      return
+    }
+    intervalRef.current = setInterval(nextImage, 5000)
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+    }
+  }, [shouldRotate, isHovered, rotationImages.length])
+
+  const currentImage = rotationImages[currentIndex] || rotationImages[0]
+
   return (
     <section id="topo" className="relative overflow-hidden border-b border-line bg-paper">
       <div className="mx-auto grid max-w-[1440px] border-x border-line lg:grid-cols-12">
@@ -46,8 +82,18 @@ export default function Hero() {
             </p>
           </div>
         </div>
-        <div className="relative min-h-[420px] overflow-hidden border-t border-line lg:col-span-4 lg:border-t-0 lg:border-l">
-          <img src={conteudo.hero.imagem} alt={conteudo.hero.alt} className="h-full w-full object-cover grayscale-[20%]" />
+        <div
+          className="relative min-h-[420px] overflow-hidden border-t border-line lg:col-span-4 lg:border-t-0 lg:border-l"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          <div className="absolute inset-0 transition-opacity duration-700 ease-in-out">
+            <img
+              src={currentImage.src}
+              alt={currentImage.alt}
+              className="h-full w-full object-cover grayscale-[20%]"
+            />
+          </div>
           <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent" />
           <p className="absolute top-5 left-5 bg-brand px-3 py-2 font-mono text-[10px] tracking-[0.14em] uppercase">Lugar para construir</p>
           <p className="absolute right-5 bottom-5 max-w-48 text-right font-mono text-[10px] leading-relaxed tracking-[0.1em] uppercase text-white/80">O futuro nasce onde alguém decide começar.</p>

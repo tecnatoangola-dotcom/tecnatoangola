@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Icone } from '../components/Icones.jsx'
 import { Section, SectionLabel } from '../components/Section.jsx'
-import { FUNDADORES, WHATSAPP_URL } from '../constants.js'
+import { WHATSAPP_URL } from '../constants.js'
 import { useConteudo } from '../lib/conteudo.js'
 import { useSeo } from '../lib/seo.jsx'
 
@@ -78,7 +78,7 @@ export default function QuemSomos() {
         intro={conteudo.quem_somos.intro}
       >
         <div className="mt-10 grid max-w-3xl gap-5 sm:grid-cols-2">
-          {FUNDADORES.map((pessoa) => (
+          {(conteudo.quem_somos.fundadores || []).map((pessoa) => (
             <article
               key={pessoa.nome}
               className="overflow-hidden border border-white/10 bg-white/5"

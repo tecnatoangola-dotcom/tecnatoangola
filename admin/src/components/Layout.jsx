@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { BarChart3, Globe, Inbox, LayoutDashboard, Users } from 'lucide-react'
 import { api, clearSession, getAdmin } from '../api.js'
+import ChatAdmin from './ChatAdmin.jsx'
 
 const LINKS = [
   { to: '/', label: 'Visão geral', Icon: LayoutDashboard },
@@ -161,6 +162,9 @@ export default function Layout() {
           <Outlet />
         </main>
       </div>
+
+      {/* Assistente de relatórios — flutuante em todas as páginas do admin */}
+      <ChatAdmin />
     </div>
   )
 }

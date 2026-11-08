@@ -9,6 +9,11 @@
   status = 200
 
 [[redirects]]
+  from = "/api/ai-chat"
+  to = "/.netlify/functions/ai-chat"
+  status = 200
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
@@ -20,4 +25,4 @@
     X-Frame-Options = "DENY"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
-    Content-Security-Policy = "default-src 'self'; connect-src 'self' https://*.supabase.co https://*.supabase.in; img-src 'self' data: https:; media-src 'self' blob: https: data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self'; base-uri 'self'; frame-src https://www.youtube.com https://player.vimeo.com; frame-ancestors 'none'; form-action 'self'"
+    Content-Security-Policy = "default-src 'self'; connect-src 'self' https://*.supabase.co https://*.supabase.in https://integrate.api.nvidia.com https://*.netlify.app https://tecnatoangola.com; img-src 'self' data: https: https://res.cloudinary.com; media-src 'self' blob: https: data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; base-uri 'self'; frame-src https://www.youtube.com https://player.vimeo.com; frame-ancestors 'none'; form-action 'self'"

@@ -28,7 +28,7 @@ try {
   await c.query(
     `INSERT INTO public.candidaturas
        (referencia, equipa, projecto, municipio, area, whatsapp, email, descricao, video_path, foto_path, status)
-     VALUES ('TESTE-ROLE','t','t','Luanda','t','935000000','t@t.com','teste','v','f','recebida')`,
+     VALUES ('TESTE-ROLE','t','t','Ingombotas','t','935000000','t@t.com','teste','v','f','recebida')`,
   )
   console.log('INSERT como anon (na BD) -> OK ✓')
 } catch (e) {

@@ -19,8 +19,10 @@ import {
   Activity,
   AlertTriangle,
   BadgeCheck,
+  Calendar,
   FileSearch,
   Filter,
+  Globe,
   Hourglass,
   Inbox,
   MessageCircle,
@@ -30,17 +32,25 @@ import {
   Timer,
   TrendingUp,
   UserPlus,
+  Users,
 } from 'lucide-react'
 import { api } from '../api.js'
 
 const MUNICIPIOS = [
   'Belas',
   'Cacuaco',
+  'Camama',
   'Cazenga',
-  'Icolo e Bengo',
-  'Luanda',
-  'Quilamba',
-  'Quissama',
+  'Hoji ya Henda',
+  'Ingombotas',
+  'Kilamba',
+  'Kilamba Kiaxi',
+  'Maianga',
+  'Mulenvos',
+  'Mussulo',
+  'Rangel',
+  'Samba',
+  'Sambizanga',
   'Talatona',
   'Viana',
 ]
@@ -338,6 +348,44 @@ export default function Dashboard() {
           hint="das pendentes"
           Icon={Hourglass}
         />
+      </div>
+
+      {/* Acessos ao site — diário, semanal, mensal e total */}
+      <div className="border border-line bg-white p-4 lg:p-5">
+        <div className="mb-3 flex items-baseline justify-between gap-3">
+          <h2 className="text-sm font-semibold tracking-[-0.02em]">Acessos ao site</h2>
+          <p className="admin-label text-ink/40">visitas registadas</p>
+        </div>
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <div className="border border-line bg-paper p-4">
+            <div className="flex items-center justify-between">
+              <p className="text-2xl font-bold tracking-[-0.04em]">{cards.acessos_dia ?? 0}</p>
+              <Calendar size={16} className="text-ink/30" strokeWidth={1.8} aria-hidden="true" />
+            </div>
+            <p className="mt-1 text-[11px] text-ink/55">Acessos hoje</p>
+          </div>
+          <div className="border border-line bg-paper p-4">
+            <div className="flex items-center justify-between">
+              <p className="text-2xl font-bold tracking-[-0.04em]">{cards.acessos_semana ?? 0}</p>
+              <Activity size={16} className="text-ink/30" strokeWidth={1.8} aria-hidden="true" />
+            </div>
+            <p className="mt-1 text-[11px] text-ink/55">Acessos (7 dias)</p>
+          </div>
+          <div className="border border-line bg-paper p-4">
+            <div className="flex items-center justify-between">
+              <p className="text-2xl font-bold tracking-[-0.04em]">{cards.acessos_mes ?? 0}</p>
+              <Globe size={16} className="text-ink/30" strokeWidth={1.8} aria-hidden="true" />
+            </div>
+            <p className="mt-1 text-[11px] text-ink/55">Acessos (30 dias)</p>
+          </div>
+          <div className="border border-l-4 border-line border-l-brand bg-paper p-4">
+            <div className="flex items-center justify-between">
+              <p className="text-2xl font-bold tracking-[-0.04em]">{cards.acessos_total ?? 0}</p>
+              <Users size={16} className="text-ink/30" strokeWidth={1.8} aria-hidden="true" />
+            </div>
+            <p className="mt-1 text-[11px] text-ink/55">Acessos totais</p>
+          </div>
+        </div>
       </div>
 
       {/* Sales Ops: funil + fila de acções */}

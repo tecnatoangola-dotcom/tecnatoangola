@@ -34,3 +34,7 @@ dist-ssr
 
 # Pastas de publicacao Netlify (contem guia com valores locais)
 /publicar/
+
+# Ficheiro local com segredos reais (Netlify env import) - nunca commitar
+/admin/netlify-env-import.txt
+

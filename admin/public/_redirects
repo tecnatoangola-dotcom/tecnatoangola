@@ -1,0 +1,6 @@
+# Netlify redirects for Admin SPA + API functions
+# API Functions (Express via serverless-http)
+/api/*  /.netlify/functions/api/:splat  200
+
+# SPA fallback
+/*  /index.html  200
