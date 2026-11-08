@@ -479,6 +479,16 @@ HORA: ${new Date().toLocaleString('pt-PT')}`
       .filter((m) => m.role === 'user' || m.role === 'assistant')
       .map((m) => ({ role: m.role, content: m.content }))
 
+    // A mensagem do utilizador entra no histórico e o input é limpo de imediato.
+    // Sem isto, o texto ficava preso no input e nada aparecia na área de mensagens.
+    setIsLoading(true)
+    setInputValue('')
+    setMessages((prev) => [...prev, {
+      role: 'user',
+      content: texto,
+      timestamp: Date.now(),
+    }])
+
     // Mensagem da AI placeholder — vai sendo preenchida com o streaming
     setMessages((prev) => [...prev, {
       role: 'assistant',
@@ -787,7 +797,7 @@ HORA: ${new Date().toLocaleString('pt-PT')}`
                   />
                   <button
                     type="button"
-                    onClick={sendMessage}
+                    onClick={() => sendMessage()}
                     disabled={!inputValue.trim() || isLoading || !aiConfig.ativo}
                     className="flex-shrink-0 min-h-11 px-4 bg-ink text-white rounded-xl font-mono text-[10px] tracking-[0.1em] uppercase hover:bg-brand hover:text-ink disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
                     aria-label={c.enviarMensagem}
