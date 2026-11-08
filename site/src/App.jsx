@@ -8,6 +8,7 @@ import MobileCtaBar from './components/MobileCtaBar.jsx'
 import ScrollToTop from './components/ScrollToTop.jsx'
 import { AuthProvider } from './lib/auth.jsx'
 import { ConteudoProvider } from './lib/conteudo.jsx'
+import { IdiomaProvider } from './i18n/idioma.jsx'
 import { track, trackOnce } from './lib/track.js'
 import AreasPage from './pages/AreasPage.jsx'
 import CandidaturaPage from './pages/CandidaturaPage.jsx'
@@ -39,8 +40,9 @@ function Analytics() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <ConteudoProvider>
+    <IdiomaProvider>
+      <AuthProvider>
+        <ConteudoProvider>
         <BrowserRouter>
           <div className="min-h-screen bg-paper pb-20 sm:pb-0">
             <Analytics />
@@ -72,7 +74,8 @@ export default function App() {
             <AISupport />
           </div>
         </BrowserRouter>
-      </ConteudoProvider>
-    </AuthProvider>
+        </ConteudoProvider>
+      </AuthProvider>
+    </IdiomaProvider>
   )
 }

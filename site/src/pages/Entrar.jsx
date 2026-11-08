@@ -2,10 +2,49 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../lib/authContext.js'
 import { useSeo } from '../lib/seo.jsx'
+import { useIdioma } from '../i18n/idioma.jsx'
+
+const T = {
+  pt: {
+    seoTitulo: 'Entrar',
+    inicio: '← Início',
+    label: 'Entrar',
+    titulo: 'Bem-vindo de volta.',
+    intro: 'Entra para acompanhares o estado das tuas candidaturas ao TECNATO.',
+    email: 'Email',
+    password: 'Palavra-passe',
+    entrar: 'Entrar',
+    aEntrar: 'A entrar…',
+    erroCredenciais: 'Email ou palavra-passe incorrectos.',
+    esqueci: 'Esqueceste a palavra-passe?',
+    recuperar: 'Recuperar aqui',
+    semConta: 'Ainda não tens conta?',
+    criar: 'Cria aqui',
+  },
+  en: {
+    seoTitulo: 'Sign in',
+    inicio: '← Home',
+    label: 'Sign in',
+    titulo: 'Welcome back.',
+    intro: 'Sign in to follow the status of your TECNATO applications.',
+    email: 'Email',
+    password: 'Password',
+    entrar: 'Sign in',
+    aEntrar: 'Signing in…',
+    erroCredenciais: 'Incorrect email or password.',
+    esqueci: 'Forgot your password?',
+    recuperar: 'Recover it here',
+    semConta: "Don't have an account yet?",
+    criar: 'Create one here',
+  },
+}
 
 export default function Entrar() {
+  const { lang } = useIdioma()
+  const c = T[lang]
+
   useSeo({
-    titulo: 'Entrar',
+    titulo: c.seoTitulo,
     caminho: '/entrar',
     noindex: true,
   })
@@ -27,7 +66,7 @@ export default function Entrar() {
     } catch (err) {
       setError(
         err.message === 'Invalid login credentials'
-          ? 'Email ou palavra-passe incorrectos.'
+          ? c.erroCredenciais
           : err.message,
       )
     } finally {
@@ -38,13 +77,13 @@ export default function Entrar() {
   return (
     <section className="mx-auto max-w-md px-5 py-12 sm:px-8 sm:py-20">
       <Link to="/" className="text-sm font-semibold text-ink/60 hover:text-ink">
-        ← Início
+        {c.inicio}
       </Link>
 
-      <p className="section-label mt-6 text-brand-deep">Entrar</p>
-      <h1 className="mt-4 text-3xl font-bold sm:text-4xl">Bem-vindo de volta.</h1>
+      <p className="section-label mt-6 text-brand-deep">{c.label}</p>
+      <h1 className="mt-4 text-3xl font-bold sm:text-4xl">{c.titulo}</h1>
       <p className="mt-3 text-sm leading-relaxed text-ink/70">
-        Entra para acompanhares o estado das tuas candidaturas ao TECNATO.
+        {c.intro}
       </p>
 
       {error && (
@@ -55,7 +94,7 @@ export default function Entrar() {
 
       <form onSubmit={handleSubmit} noValidate className="mt-6 rounded-2xl border border-line bg-white p-5 sm:p-6">
         <label className="mb-1.5 block text-sm font-semibold text-ink/80" htmlFor="email">
-          Email
+          {c.email}
         </label>
         <input
           id="email"
@@ -69,7 +108,7 @@ export default function Entrar() {
         />
 
         <label className="mt-5 mb-1.5 block text-sm font-semibold text-ink/80" htmlFor="password">
-          Palavra-passe
+          {c.password}
         </label>
         <input
           id="password"
@@ -87,21 +126,21 @@ export default function Entrar() {
           disabled={busy}
           className="mt-6 flex min-h-12 w-full items-center justify-center rounded-full bg-ink px-6 py-3.5 text-sm font-semibold text-white disabled:opacity-50"
         >
-          {busy ? 'A entrar…' : 'Entrar'}
+          {busy ? c.aEntrar : c.entrar}
         </button>
       </form>
 
       <p className="mt-4 text-center text-sm text-ink/65">
-        Esqueceste a palavra-passe?{' '}
+        {c.esqueci}{' '}
         <Link to="/recuperar" className="font-semibold text-ink underline underline-offset-2">
-          Recuperar aqui
+          {c.recuperar}
         </Link>
       </p>
 
       <p className="mt-5 text-center text-sm text-ink/65">
-        Ainda não tens conta?{' '}
+        {c.semConta}{' '}
         <Link to="/registar" className="font-semibold text-ink underline underline-offset-2">
-          Cria aqui
+          {c.criar}
         </Link>
       </p>
     </section>

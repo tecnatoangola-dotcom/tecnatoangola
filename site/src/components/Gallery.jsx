@@ -1,4 +1,5 @@
 import { useConteudo } from '../lib/conteudo.js'
+import { useIdioma } from '../i18n/idioma.jsx'
 
 function Card({ photo, duplicate }) {
   return (
@@ -23,13 +24,14 @@ function Card({ photo, duplicate }) {
 
 export default function Gallery() {
   const conteudo = useConteudo()
+  const { lang } = useIdioma()
   const photos = conteudo.galeria.imagens?.length ? conteudo.galeria.imagens : []
   const items = [...photos, ...photos]
 
   if (!photos.length) return null
 
   return (
-    <section aria-label="Galeria TECNATO" className="overflow-hidden border-b border-line bg-paper py-6">
+    <section aria-label={lang === 'en' ? 'TECNATO gallery' : 'Galeria TECNATO'} className="overflow-hidden border-b border-line bg-paper py-6">
       <div className="mx-auto mb-5 flex max-w-[1440px] items-center justify-between border-x border-line px-5 sm:px-8 lg:px-12">
         <p className="section-label text-ink/50">{conteudo.galeria.etiqueta}</p>
         <p className="hidden font-mono text-[10px] tracking-[0.12em] text-ink/40 uppercase sm:block">Luanda · Angola</p>

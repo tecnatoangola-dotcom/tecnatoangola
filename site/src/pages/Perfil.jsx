@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, Navigate } from 'react-router-dom'
-import { WHATSAPP_URL } from '../constants.js'
+import { whatsappUrl } from '../constants.js'
 import {
   STATUS_LABELS,
   STATUS_STYLES,
@@ -9,10 +9,79 @@ import {
 import { useAuth } from '../lib/authContext.js'
 import { isSupabaseConfigured, supabase } from '../lib/supabase.js'
 import { useSeo } from '../lib/seo.jsx'
+import { useIdioma } from '../i18n/idioma.jsx'
 
-function formatDate(iso) {
+const T = {
+  pt: {
+    seoTitulo: 'O meu perfil',
+    inicio: '← Início',
+    alterarFoto: 'Alterar foto de perfil',
+    label: 'O meu perfil',
+    terminarSessao: 'Terminar sessão',
+    minhasCandidaturas: 'As minhas candidaturas',
+    novaCandidatura: '+ Nova candidatura',
+    erroCarregar: 'Não foi possível carregar as candidaturas:',
+    aCarregar: 'A carregar…',
+    vazioTitulo: 'Ainda não tens candidaturas.',
+    vazioTexto:
+      'Envia o vídeo da tua equipa e acompanha aqui o estado de verificação e aprovação.',
+    apresentar: 'Apresentar o meu projecto',
+    rejeitada:
+      'Candidatura não aprovada nesta fase — contacta-nos para saber mais.',
+    passoEnviada: 'Enviada',
+    passoVerificacao: 'Em verificação',
+    passoAprovada: 'Aprovada',
+    enviadaEm: 'Enviada em',
+    recado: 'Recado da equipa TECNATO ·',
+    duvidas: 'Tens dúvidas sobre o estado da tua candidatura?',
+    whatsapp: 'Fala connosco por WhatsApp',
+    erroFotoTipo: 'Escolhe uma imagem (JPG, PNG ou WebP).',
+    erroFotoEnvio: 'Não foi possível enviar a foto. Tenta novamente.',
+    status: {
+      submetida: 'Enviada',
+      em_verificacao: 'Em verificação',
+      aprovada: 'Aprovada',
+      rejeitada: 'Rejeitada',
+    },
+    localidade: 'pt-PT',
+  },
+  en: {
+    seoTitulo: 'My profile',
+    inicio: '← Home',
+    alterarFoto: 'Change profile photo',
+    label: 'My profile',
+    terminarSessao: 'Sign out',
+    minhasCandidaturas: 'My applications',
+    novaCandidatura: '+ New application',
+    erroCarregar: 'Could not load your applications:',
+    aCarregar: 'Loading…',
+    vazioTitulo: 'You have no applications yet.',
+    vazioTexto:
+      "Submit your team's video and follow the verification and approval status here.",
+    apresentar: 'Present my project',
+    rejeitada: 'Application not approved at this stage — contact us to learn more.',
+    passoEnviada: 'Submitted',
+    passoVerificacao: 'Under review',
+    passoAprovada: 'Approved',
+    enviadaEm: 'Submitted on',
+    recado: 'Note from the TECNATO team ·',
+    duvidas: 'Questions about your application status?',
+    whatsapp: 'Chat with us on WhatsApp',
+    erroFotoTipo: 'Choose an image (JPG, PNG or WebP).',
+    erroFotoEnvio: 'Could not upload the photo. Try again.',
+    status: {
+      submetida: 'Submitted',
+      em_verificacao: 'Under review',
+      aprovada: 'Approved',
+      rejeitada: 'Rejected',
+    },
+    localidade: 'en-GB',
+  },
+}
+
+function formatDate(iso, lang) {
   if (!iso) return '—'
-  return new Date(iso).toLocaleDateString('pt-PT', {
+  return new Date(iso).toLocaleDateString(T[lang].localidade, {
     day: '2-digit',
     month: 'short',
     year: 'numeric',
@@ -20,8 +89,11 @@ function formatDate(iso) {
 }
 
 export default function Perfil() {
+  const { lang } = useIdioma()
+  const c = T[lang]
+
   useSeo({
-    titulo: 'O meu perfil',
+    titulo: c.seoTitulo,
     caminho: '/perfil',
     noindex: true,
   })
@@ -65,7 +137,7 @@ export default function Perfil() {
     setAvatarError('')
 
     if (!file.type.startsWith('image/')) {
-      setAvatarError('Escolhe uma imagem (JPG, PNG ou WebP).')
+      setAvatarError(c.erroFotoTipo)
       return
     }
 
@@ -75,7 +147,7 @@ export default function Perfil() {
       .upload(path, file, { upsert: true, contentType: file.type })
 
     if (error) {
-      setAvatarError('Não foi possível enviar a foto. Tenta novamente.')
+      setAvatarError(c.erroFotoEnvio)
       return
     }
 
@@ -105,7 +177,7 @@ export default function Perfil() {
   return (
     <section className="mx-auto max-w-3xl px-5 py-10 sm:px-8 sm:py-16">
       <Link to="/" className="text-sm font-semibold text-ink/60 hover:text-ink">
-        ← Início
+        {c.inicio}
       </Link>
 
       <div className="mt-6 flex flex-wrap items-start justify-between gap-4">
@@ -128,14 +200,14 @@ export default function Perfil() {
             <button
               type="button"
               onClick={() => avatarInputRef.current?.click()}
-              aria-label="Alterar foto de perfil"
+              aria-label={c.alterarFoto}
               className="absolute -right-1 -bottom-1 flex h-8 w-8 items-center justify-center rounded-full border border-line bg-white text-sm shadow-sm"
             >
               ✎
             </button>
           </div>
           <div>
-            <p className="section-label text-brand-deep">O meu perfil</p>
+            <p className="section-label text-brand-deep">{c.label}</p>
             <h1 className="mt-1.5 text-2xl font-bold sm:text-3xl">{nome}</h1>
             <p className="mt-1 text-sm text-ink/60">{user.email}</p>
             {avatarError && <p className="mt-1 text-xs text-red-600">{avatarError}</p>}
@@ -146,40 +218,40 @@ export default function Perfil() {
           onClick={signOut}
           className="min-h-11 rounded-full border border-ink/20 px-5 py-2.5 text-sm font-semibold transition-colors hover:border-ink"
         >
-          Terminar sessão
+          {c.terminarSessao}
         </button>
       </div>
 
       <div className="mt-10">
         <div className="flex items-baseline justify-between gap-4">
-          <p className="section-label text-ink/50">As minhas candidaturas</p>
+          <p className="section-label text-ink/50">{c.minhasCandidaturas}</p>
           <Link
             to="/candidatura"
             className="text-sm font-semibold text-ink underline underline-offset-2"
           >
-            + Nova candidatura
+            {c.novaCandidatura}
           </Link>
         </div>
 
         {loadError && (
           <div className="mt-4 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3.5 text-sm text-amber-900">
-            Não foi possível carregar as candidaturas: {loadError}
+            {c.erroCarregar} {loadError}
           </div>
         )}
 
         {loadingRows ? (
-          <p className="mt-6 text-sm text-ink/55">A carregar…</p>
+          <p className="mt-6 text-sm text-ink/55">{c.aCarregar}</p>
         ) : rows.length === 0 ? (
           <div className="mt-5 rounded-2xl border border-line bg-white p-6 text-center">
-            <p className="text-sm font-semibold">Ainda não tens candidaturas.</p>
+            <p className="text-sm font-semibold">{c.vazioTitulo}</p>
             <p className="mt-1.5 text-sm text-ink/65">
-              Envia o vídeo da tua equipa e acompanha aqui o estado de verificação e aprovação.
+              {c.vazioTexto}
             </p>
             <Link
               to="/candidatura"
               className="mt-5 inline-flex min-h-12 items-center justify-center rounded-full bg-ink px-6 py-3.5 text-sm font-semibold text-white"
             >
-              Apresentar o meu projecto
+              {c.apresentar}
             </Link>
           </div>
         ) : (
@@ -201,14 +273,14 @@ export default function Perfil() {
                       STATUS_STYLES[row.status] || STATUS_STYLES.submetida
                     }`}
                   >
-                    {STATUS_LABELS[row.status] || row.status}
+                    {c.status[row.status] || STATUS_LABELS[row.status] || row.status}
                   </span>
                 </div>
 
                 <div className="mt-4 border-t border-line pt-4">
                   {row.status === 'rejeitada' ? (
                     <p className="text-xs font-medium text-red-700">
-                      Candidatura não aprovada nesta fase — contacta-nos para saber mais.
+                      {c.rejeitada}
                     </p>
                   ) : (
                     <>
@@ -228,19 +300,19 @@ export default function Perfil() {
                         })}
                       </ol>
                       <div className="mt-2 flex justify-between text-[11px] text-ink/50">
-                        <span>Enviada</span>
-                        <span>Em verificação</span>
-                        <span>Aprovada</span>
+                        <span>{c.passoEnviada}</span>
+                        <span>{c.passoVerificacao}</span>
+                        <span>{c.passoAprovada}</span>
                       </div>
                     </>
                   )}
-                  <p className="mt-3 text-xs text-ink/50">Enviada em {formatDate(row.created_at)}</p>
+                  <p className="mt-3 text-xs text-ink/50">{c.enviadaEm} {formatDate(row.created_at, lang)}</p>
                 </div>
 
                 {row.admin_nota && (
                   <div className="mt-4 rounded-xl border border-brand/60 bg-brand/10 px-4 py-3">
                     <p className="text-xs font-semibold tracking-wider text-ink/70 uppercase">
-                      Recado da equipa TECNATO · {formatDate(row.avaliado_em)}
+                      {c.recado} {formatDate(row.avaliado_em, lang)}
                     </p>
                     <p className="mt-1.5 text-sm leading-relaxed text-ink/80">{row.admin_nota}</p>
                   </div>
@@ -252,14 +324,14 @@ export default function Perfil() {
       </div>
 
       <div className="mt-10 rounded-2xl border border-line bg-white p-5 text-sm leading-relaxed text-ink/70 sm:p-6">
-        Tens dúvidas sobre o estado da tua candidatura?{' '}
+        {c.duvidas}{' '}
         <a
-          href={WHATSAPP_URL}
+          href={whatsappUrl(lang)}
           target="_blank"
           rel="noreferrer"
           className="font-semibold text-ink underline underline-offset-2"
         >
-          Fala connosco por WhatsApp
+          {c.whatsapp}
         </a>
         .
       </div>

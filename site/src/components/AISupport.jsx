@@ -1,7 +1,71 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useConteudo } from '../lib/conteudo.js'
-import { WHATSAPP_URL } from '../constants.js'
+import { whatsappUrl } from '../constants.js'
+import { useIdioma } from '../i18n/idioma.jsx'
+
+const T = {
+  pt: {
+    tu: 'Tu',
+    falarWhatsapp: 'Falar por WhatsApp',
+    verImagem: 'Ver imagem',
+    imagemTecnato: 'Imagem do TECNATO',
+    fecharImagem: 'Fechar imagem',
+    abrirTecnocrata: 'Abrir Tecnocrata',
+    fecharTecnocrata: 'Fechar Tecnocrata',
+    indisponivel: 'Tecnocrata indisponível',
+    assistenteOnline: 'Assistente do TECNATO • online',
+    expandirChat: 'Expandir chat',
+    minimizarChat: 'Minimizar chat',
+    fecharChat: 'Fechar chat',
+    vindasInicio: 'Olá! Sou o ',
+    vindasFim: ', o assistente do TECNATO. Como posso ajudar-te hoje?',
+    sugestoes: [
+      'Como faço uma candidatura?',
+      'Quais são as áreas disponíveis?',
+      'Quem são os fundadores?',
+      'Como funciona o processo?',
+    ],
+    verImagensDisponiveis: 'Ver imagens disponíveis',
+    verImagensTecnato: 'Ver imagens TECNATO',
+    placeholder: 'Escreve a tua pergunta...',
+    mensagemPara: 'Mensagem para o Tecnocrata',
+    enviarMensagem: 'Enviar mensagem',
+    erroProcessar: 'Desculpa, não consegui processar a tua mensagem.',
+    erroContacto:
+      'Peço desculpa, não consegui contactar o Tecnocrata neste momento. Tenta novamente daqui a instantes ou fala connosco por WhatsApp.',
+  },
+  en: {
+    tu: 'You',
+    falarWhatsapp: 'Chat on WhatsApp',
+    verImagem: 'View image',
+    imagemTecnato: 'TECNATO image',
+    fecharImagem: 'Close image',
+    abrirTecnocrata: 'Open Tecnocrata',
+    fecharTecnocrata: 'Close Tecnocrata',
+    indisponivel: 'Tecnocrata unavailable',
+    assistenteOnline: 'TECNATO assistant • online',
+    expandirChat: 'Expand chat',
+    minimizarChat: 'Minimize chat',
+    fecharChat: 'Close chat',
+    vindasInicio: "Hi! I'm ",
+    vindasFim: ", TECNATO's assistant. How can I help you today?",
+    sugestoes: [
+      'How do I apply?',
+      'Which fields are available?',
+      'Who are the founders?',
+      'How does the process work?',
+    ],
+    verImagensDisponiveis: 'View available images',
+    verImagensTecnato: 'View TECNATO images',
+    placeholder: 'Type your question...',
+    mensagemPara: 'Message to Tecnocrata',
+    enviarMensagem: 'Send message',
+    erroProcessar: "Sorry, I couldn't process your message.",
+    erroContacto:
+      "I'm sorry, I couldn't reach Tecnocrata right now. Please try again in a moment or talk to us on WhatsApp.",
+  },
+}
 
 // Logo oficial do Tecnato (nuvem)
 const LOGO_TECNATO_URL = 'https://res.cloudinary.com/cqdjtwze/image/upload/v1792692837/TECNATO_2.png'
@@ -160,6 +224,8 @@ function exibirSemTags(texto) {
 // Mensagem no chat — estilo ChatGPT:
 // AI = texto simples no fundo (sem cartão); utilizador = bolha à direita
 function Message({ message, images, onImageClick }) {
+  const { lang } = useIdioma()
+  const c = T[lang]
   const content = message.content
 
   if (message.role === 'user') {
@@ -168,7 +234,7 @@ function Message({ message, images, onImageClick }) {
         <div className="max-w-[85%] px-4 py-2.5 rounded-3xl bg-ink/10 text-ink text-[15px] leading-relaxed whitespace-pre-wrap">
           {content}
         </div>
-        <div className="flex-shrink-0 h-7 w-7 rounded-full bg-ink/10 text-ink/60 flex items-center justify-center" aria-label="Tu">
+        <div className="flex-shrink-0 h-7 w-7 rounded-full bg-ink/10 text-ink/60 flex items-center justify-center" aria-label={c.tu}>
           <UserIcon />
         </div>
       </div>
@@ -189,13 +255,13 @@ function Message({ message, images, onImageClick }) {
         {/* Botão WhatsApp (mensagens de encaminhamento para a equipa) */}
         {message.whatsapp && (
           <a
-            href={WHATSAPP_URL}
+            href={whatsappUrl(lang)}
             target="_blank"
             rel="noreferrer"
             className="mt-3 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#25D366] text-white text-xs font-semibold hover:bg-[#1ebe5b] transition-colors"
           >
             <WhatsAppIcon />
-            Falar por WhatsApp
+            {c.falarWhatsapp}
           </a>
         )}
 
@@ -208,9 +274,9 @@ function Message({ message, images, onImageClick }) {
                 type="button"
                 onClick={() => onImageClick(img)}
                 className="relative h-20 w-20 sm:h-24 sm:w-24 rounded-xl overflow-hidden bg-ink-soft border border-line transition-transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-brand"
-                aria-label={`Ver imagem: ${img.alt || 'Imagem do TECNATO'}`}
+                aria-label={`${c.verImagem}: ${img.alt || c.imagemTecnato}`}
               >
-                <img src={img.src} alt={img.alt || 'Imagem TECNATO'} className="h-full w-full object-cover" loading="lazy" />
+                <img src={img.src} alt={img.alt || c.imagemTecnato} className="h-full w-full object-cover" loading="lazy" />
               </button>
             ))}
           </div>
@@ -243,6 +309,9 @@ function Message({ message, images, onImageClick }) {
 
 // Modal de visualização de imagem em tamanho grande
 function ImageViewer({ image, onClose }) {
+  const { lang } = useIdioma()
+  const c = T[lang]
+
   if (!image) return null
 
   return (
@@ -252,13 +321,13 @@ function ImageViewer({ image, onClose }) {
           type="button"
           onClick={onClose}
           className="absolute -top-12 right-0 z-10 p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
-          aria-label="Fechar imagem"
+          aria-label={c.fecharImagem}
         >
           <CloseIcon />
         </button>
         <img
           src={image.src}
-          alt={image.alt || 'Imagem TECNATO'}
+          alt={image.alt || c.imagemTecnato}
           className="max-w-full max-h-[85vh] rounded-xl shadow-2xl object-contain"
         />
         {image.alt && (
@@ -290,6 +359,8 @@ function sessaoID() {
 
 export default function AISupport() {
   const conteudo = useConteudo()
+  const { lang } = useIdioma()
+  const c = T[lang]
   const navigate = useNavigate()
   const location = useLocation()
   const [isOpen, setIsOpen] = useState(false)
@@ -485,11 +556,11 @@ HORA: ${new Date().toLocaleString('pt-PT')}`
       } else {
         // Fallback sem streaming
         const data = await response.json()
-        aiContent = data.content || 'Desculpa, não consegui processar a tua mensagem.'
+        aiContent = data.content || c.erroProcessar
       }
 
       if (!aiContent.trim()) {
-        aiContent = 'Desculpa, não consegui processar a tua mensagem.'
+        aiContent = c.erroProcessar
       }
 
       // Processa tags especiais [LINK:...] e [IMAGE:...] no texto final
@@ -531,7 +602,7 @@ HORA: ${new Date().toLocaleString('pt-PT')}`
       // Se existir um placeholder de streaming, substitui-o; senão, acrescenta.
       const erroMsg = {
         role: 'assistant',
-        content: 'Peço desculpa, não consegui contactar o Tecnocrata neste momento. Tenta novamente daqui a instantes ou fala connosco por WhatsApp.',
+        content: c.erroContacto,
         whatsapp: true,
         timestamp: Date.now(),
       }
@@ -572,18 +643,18 @@ HORA: ${new Date().toLocaleString('pt-PT')}`
       <button
         type="button"
         onClick={toggleChat}
-        className={`fixed bottom-6 right-6 z-50 h-14 w-14 sm:h-16 sm:w-16 rounded-full shadow-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-ink flex items-center justify-center
+        className={`fixed bottom-24 right-4 z-50 h-14 w-14 sm:bottom-6 sm:right-6 sm:h-16 sm:w-16 rounded-full shadow-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-ink flex items-center justify-center overflow-hidden
           ${isOpen && !isMinimized ? 'scale-0 opacity-0 pointer-events-none' : 'scale-100 opacity-100'}
           ${isOpen && isMinimized ? 'scale-100 opacity-100' : ''}
         `}
         style={{
           backgroundColor: '#003366', // azul escuro mais visível para testar logo
         }}
-        aria-label={isOpen ? 'Fechar Tecnocrata' : 'Abrir Tecnocrata'}
+        aria-label={isOpen ? c.fecharTecnocrata : c.abrirTecnocrata}
         aria-expanded={isOpen && !isMinimized}
       >
         {!isOpen && !aiConfig.ativo && (
-          <span className="sr-only">Tecnocrata indisponível</span>
+          <span className="sr-only">{c.indisponivel}</span>
         )}
         <img
           src="https://res.cloudinary.com/cqdjtwze/image/upload/v1792692837/TECNATO_2.png"
@@ -594,14 +665,14 @@ HORA: ${new Date().toLocaleString('pt-PT')}`
 
       {/* Badge de notificação no botão (quando fechado) */}
       {!isOpen && messages.some(m => m.role === 'assistant' && !m.read) && (
-        <span className="fixed bottom-6 right-6 z-50 translate-x-1/2 -translate-y-1/2 h-5 w-5 sm:h-6 sm:w-6 rounded-full bg-brand text-white text-[9px] font-bold flex items-center justify-center animate-bounce">
+        <span className="fixed bottom-24 right-4 z-50 translate-x-1/2 -translate-y-1/2 h-5 w-5 sm:bottom-6 sm:right-6 sm:h-6 sm:w-6 rounded-full bg-brand text-white text-[9px] font-bold flex items-center justify-center animate-bounce">
           !
         </span>
       )}
 
       {/* Chat Window */}
       {isOpen && (
-        <div className={`fixed bottom-6 right-6 z-50 w-full max-w-sm sm:max-w-md lg:max-w-lg transition-all duration-300 ${isMinimized ? 'h-14' : 'h-[500px] sm:h-[600px]'} animate-slide-up`}>
+        <div className={`fixed bottom-24 right-4 z-50 w-full max-w-sm sm:bottom-6 sm:right-6 sm:max-w-md lg:max-w-lg transition-all duration-300 ${isMinimized ? 'h-14' : 'h-[500px] sm:h-[600px]'} animate-slide-up`}>
           <div
             ref={chatRef}
             className={`h-full flex flex-col rounded-2xl bg-white shadow-2xl border border-line overflow-hidden ${isMinimized ? 'rounded-full' : 'rounded-2xl'}`}
@@ -612,7 +683,7 @@ HORA: ${new Date().toLocaleString('pt-PT')}`
                 <AvatarTecnato className="h-9 w-9" />
                 <div>
                   <p className="font-semibold text-sm">Tecnocrata</p>
-                  <p className="text-[10px] text-brand/90">Assistente do TECNATO • online</p>
+                  <p className="text-[10px] text-brand/90">{c.assistenteOnline}</p>
                 </div>
               </div>
               <div className="flex items-center gap-1">
@@ -620,7 +691,7 @@ HORA: ${new Date().toLocaleString('pt-PT')}`
                   type="button"
                   onClick={toggleMinimize}
                   className="p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
-                  aria-label={isMinimized ? 'Expandir chat' : 'Minimizar chat'}
+                  aria-label={isMinimized ? c.expandirChat : c.minimizarChat}
                 >
                   {isMinimized ? <ExpandIcon /> : <MinimizeIcon />}
                 </button>
@@ -628,7 +699,7 @@ HORA: ${new Date().toLocaleString('pt-PT')}`
                   type="button"
                   onClick={() => setIsOpen(false)}
                   className="p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-white/10 transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
-                  aria-label="Fechar chat"
+                  aria-label={c.fecharChat}
                 >
                   <CloseIcon />
                 </button>
@@ -643,15 +714,10 @@ HORA: ${new Date().toLocaleString('pt-PT')}`
                     <AvatarTecnato className="h-7 w-7 mt-1" />
                     <div className="flex-1 min-w-0">
                       <div className="text-[15px] leading-7 text-ink/90">
-                        Olá! Sou o <strong>Tecnocrata</strong>, o assistente do TECNATO. Como posso ajudar-te hoje?
+                        {c.vindasInicio}<strong>Tecnocrata</strong>{c.vindasFim}
                       </div>
                       <div className="mt-3 flex flex-wrap gap-2">
-                        {[
-                          'Como faço uma candidatura?',
-                          'Quais são as áreas disponíveis?',
-                          'Quem são os fundadores?',
-                          'Como funciona o processo?',
-                        ].map((sug, i) => (
+                        {c.sugestoes.map((sug, i) => (
                           <button
                             key={i}
                             type="button"
@@ -704,8 +770,8 @@ HORA: ${new Date().toLocaleString('pt-PT')}`
                       setViewerImage(img)
                     }}
                     className="flex-shrink-0 p-2 rounded-xl text-ink/50 hover:text-brand hover:bg-brand/10 transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
-                    aria-label="Ver imagens TECNATO"
-                    title="Ver imagens disponíveis"
+                    aria-label={c.verImagensTecnato}
+                    title={c.verImagensDisponiveis}
                   >
                     <ImageIcon />
                   </button>
@@ -714,17 +780,17 @@ HORA: ${new Date().toLocaleString('pt-PT')}`
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    placeholder={aiConfig.ativo ? 'Escreve a tua pergunta...' : 'Tecnocrata indisponível'}
+                    placeholder={aiConfig.ativo ? c.placeholder : c.indisponivel}
                     className="flex-1 min-h-11 px-4 py-2.5 text-sm border border-line bg-white rounded-xl focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
                     disabled={isLoading || !aiConfig.ativo}
-                    aria-label="Mensagem para o Tecnocrata"
+                    aria-label={c.mensagemPara}
                   />
                   <button
                     type="button"
                     onClick={sendMessage}
                     disabled={!inputValue.trim() || isLoading || !aiConfig.ativo}
                     className="flex-shrink-0 min-h-11 px-4 bg-ink text-white rounded-xl font-mono text-[10px] tracking-[0.1em] uppercase hover:bg-brand hover:text-ink disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
-                    aria-label="Enviar mensagem"
+                    aria-label={c.enviarMensagem}
                   >
                     {isLoading ? <LoadingIcon /> : <SendIcon />}
                   </button>

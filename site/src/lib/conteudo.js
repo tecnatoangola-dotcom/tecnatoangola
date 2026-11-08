@@ -1,5 +1,7 @@
 import { createContext, useContext } from 'react'
 import { PARCEIROS } from '../constants.js'
+import { useIdioma } from '../i18n/idioma.jsx'
+import { localizarConteudo } from '../i18n/conteudoEn.js'
 
 // Valores por omissão — o site mostra sempre estes dados se a BD estiver vazia
 // ou se o Supabase não estiver configurado.
@@ -109,7 +111,9 @@ export const CONTEUDO_PADRAO = {
 export const ConteudoContext = createContext(CONTEUDO_PADRAO)
 
 export function useConteudo() {
-  return useContext(ConteudoContext)
+  const conteudo = useContext(ConteudoContext)
+  const { lang } = useIdioma()
+  return localizarConteudo(conteudo, lang)
 }
 
 // Converte um link (YouTube / Vimeo / MP4) em fonte reproduzível em ciclo e mudo.

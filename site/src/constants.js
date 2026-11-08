@@ -2,21 +2,53 @@ export const WHATSAPP_NUMBER = '244935073125'
 
 export const SITE_URL = 'https://tecnatoangola.com/'
 
-export const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-  'Olá! Quero apresentar o meu projecto ao TECNATO.',
-)}`
+const MENSAGEM_WHATSAPP = {
+  pt: 'Olá! Quero apresentar o meu projecto ao TECNATO.',
+  en: 'Hello! I would like to present my project to TECNATO.',
+}
+
+export function whatsappUrl(lang = 'pt') {
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+    MENSAGEM_WHATSAPP[lang] || MENSAGEM_WHATSAPP.pt,
+  )}`
+}
+
+// Mantido para compatibilidade com pontos que ainda não recebem o idioma.
+export const WHATSAPP_URL = whatsappUrl('pt')
 
 export const EMAIL = 'suporte@tecnatoangola.com'
 
+// `chave` indexa NAV_TEXTOS; o rótulo nunca deve ser comparado por texto.
 export const NAV_LINKS = [
-  { href: '/projecto', label: 'O projecto' },
-  { href: '/areas', label: 'Áreas' },
-  { href: '/como-funciona', label: 'Como funciona' },
-  { href: '/participar', label: 'Participar' },
-  { href: '/candidatura', label: 'Candidatura' },
-  { href: '/quem-somos', label: 'Quem somos' },
-  { href: '/faq', label: 'FAQ' },
+  { href: '/projecto', chave: 'projecto' },
+  { href: '/areas', chave: 'areas' },
+  { href: '/como-funciona', chave: 'comoFunciona' },
+  { href: '/participar', chave: 'participar' },
+  { href: '/candidatura', chave: 'candidatura' },
+  { href: '/quem-somos', chave: 'quemSomos' },
+  { href: '/faq', chave: 'faq' },
 ]
+
+export const NAV_TEXTOS = {
+  pt: {
+    projecto: 'O projecto',
+    areas: 'Áreas',
+    comoFunciona: 'Como funciona',
+    participar: 'Participar',
+    candidatura: 'Candidatura',
+    quemSomos: 'Quem somos',
+    faq: 'FAQ',
+  },
+  en: {
+    projecto: 'The project',
+    areas: 'Fields',
+    comoFunciona: 'How it works',
+    participar: 'Take part',
+    candidatura: 'Apply',
+    quemSomos: 'About us',
+    faq: 'FAQ',
+  },
+}
 
 export const PARCEIROS = [
   {

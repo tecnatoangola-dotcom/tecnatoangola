@@ -1,15 +1,50 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { NAV_LINKS, WHATSAPP_URL } from '../constants.js'
+import { NAV_LINKS, NAV_TEXTOS, whatsappUrl } from '../constants.js'
+import { useIdioma } from '../i18n/idioma.jsx'
 import { useAuth } from '../lib/authContext.js'
+import SeletorIdioma from './SeletorIdioma.jsx'
 
-const DESKTOP_LINKS = NAV_LINKS.filter((link) =>
-  ['O projecto', 'Áreas', 'Como funciona', 'Quem somos'].includes(link.label),
-)
+const DESKTOP_HREFS = ['/projecto', '/areas', '/como-funciona', '/quem-somos']
+
+const T = {
+  pt: {
+    inicio: 'TECNATO — início',
+    perfil: 'Perfil',
+    entrar: 'Entrar',
+    apresentar: 'Apresentar projecto',
+    abrirMenu: 'Abrir menu',
+    fecharMenu: 'Fechar menu',
+    apresentarLongo: 'Apresentar o meu projecto',
+    meuPerfil: 'O meu perfil',
+    entrarCriar: 'Entrar / Criar conta',
+    whatsapp: 'Falar por WhatsApp',
+    idioma: 'Idioma',
+  },
+  en: {
+    inicio: 'TECNATO — home',
+    perfil: 'Profile',
+    entrar: 'Sign in',
+    apresentar: 'Present project',
+    abrirMenu: 'Open menu',
+    fecharMenu: 'Close menu',
+    apresentarLongo: 'Present my project',
+    meuPerfil: 'My profile',
+    entrarCriar: 'Sign in / Create account',
+    whatsapp: 'Chat on WhatsApp',
+    idioma: 'Language',
+  },
+}
 
 export default function Header() {
   const [open, setOpen] = useState(false)
   const { user } = useAuth()
+  const { lang } = useIdioma()
+  const c = T[lang]
+  const nav = NAV_TEXTOS[lang]
+  const wa = whatsappUrl(lang)
+
+  const DESKTOP_LINKS = NAV_LINKS.filter((link) => DESKTOP_HREFS.includes(link.href))
 
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : ''
@@ -22,7 +57,7 @@ export default function Header() {
     <>
       <header className="sticky top-0 z-50 border-b border-line bg-paper/95 backdrop-blur-md">
         <div className="mx-auto flex h-15 max-w-[1440px] items-center justify-between gap-4 border-x border-line px-5 sm:h-18 sm:px-8 lg:grid lg:grid-cols-[1fr_auto_1fr] lg:px-10">
-          <Link to="/" aria-label="TECNATO — início" className="flex items-center lg:justify-self-start">
+          <Link to="/" aria-label={c.inicio} className="flex items-center lg:justify-self-start">
             <img
               src="/logo/TECNATO.png"
               alt="TECNATO"
@@ -40,7 +75,7 @@ export default function Header() {
                   to={link.href}
                   className="relative px-3 py-2 font-mono text-[10px] tracking-[0.11em] uppercase text-ink/65 transition-colors after:absolute after:inset-x-3 after:bottom-0 after:h-px after:origin-left after:scale-x-0 after:bg-ink after:transition-transform hover:text-ink hover:after:scale-x-100"
                 >
-                  {link.label}
+                  {nav[link.chave]}
                 </Link>
               ) : (
                 <a
@@ -48,29 +83,32 @@ export default function Header() {
                   href={link.href}
                   className="relative px-3 py-2 font-mono text-[10px] tracking-[0.11em] uppercase text-ink/65 transition-colors after:absolute after:inset-x-3 after:bottom-0 after:h-px after:origin-left after:scale-x-0 after:bg-ink after:transition-transform hover:text-ink hover:after:scale-x-100"
                 >
-                  {link.label}
+                  {nav[link.chave]}
                 </a>
               ),
             )}
           </nav>
 
           <div className="flex h-full items-center gap-0 lg:justify-self-end">
+            <div className="mr-2 hidden sm:block">
+              <SeletorIdioma />
+            </div>
             <Link
               to={user ? '/perfil' : '/entrar'}
               className="hidden h-full items-center px-4 font-mono text-[10px] tracking-[0.12em] uppercase text-ink/65 transition-colors hover:text-ink sm:flex"
             >
-              {user ? 'Perfil' : 'Entrar'}
+              {user ? c.perfil : c.entrar}
             </Link>
             <Link
               to="/candidatura"
               className="hidden h-10 items-center bg-ink px-5 font-mono text-[10px] font-medium tracking-[0.12em] uppercase text-white transition-all hover:-translate-y-0.5 hover:bg-brand hover:text-ink sm:inline-flex"
             >
-              Apresentar projecto
+              {c.apresentar}
             </Link>
             <button
               type="button"
               onClick={() => setOpen(true)}
-              aria-label="Abrir menu"
+              aria-label={c.abrirMenu}
               className="flex h-11 w-11 items-center justify-center rounded-full border border-line lg:hidden"
             >
               <span className="relative block h-3.5 w-5">
@@ -92,7 +130,7 @@ export default function Header() {
             <button
               type="button"
               onClick={() => setOpen(false)}
-              aria-label="Fechar menu"
+              aria-label={c.fecharMenu}
               className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-xl"
             >
               ✕
@@ -109,7 +147,7 @@ export default function Header() {
                       onClick={() => setOpen(false)}
                       className="flex min-h-12 items-center border-b border-white/10 font-display text-xl font-semibold"
                     >
-                      {link.label}
+                      {nav[link.chave]}
                     </Link>
                   ) : (
                     <a
@@ -117,7 +155,7 @@ export default function Header() {
                       onClick={() => setOpen(false)}
                       className="flex min-h-12 items-center border-b border-white/10 font-display text-xl font-semibold"
                     >
-                      {link.label}
+                      {nav[link.chave]}
                     </a>
                   )}
                 </li>
@@ -130,24 +168,28 @@ export default function Header() {
                 onClick={() => setOpen(false)}
                 className="flex min-h-12 items-center justify-center rounded-full bg-brand px-6 py-3.5 text-sm font-semibold text-ink"
               >
-                Apresentar o meu projecto
+                {c.apresentarLongo}
               </Link>
               <Link
                 to={user ? '/perfil' : '/entrar'}
                 onClick={() => setOpen(false)}
                 className="flex min-h-12 items-center justify-center rounded-full border border-white/25 px-6 py-3.5 text-sm font-semibold"
               >
-                {user ? 'O meu perfil' : 'Entrar / Criar conta'}
+                {user ? c.meuPerfil : c.entrarCriar}
               </Link>
               <a
-                href={WHATSAPP_URL}
+                href={wa}
                 target="_blank"
                 rel="noreferrer"
                 onClick={() => setOpen(false)}
                 className="flex min-h-12 items-center justify-center rounded-full border border-white/25 px-6 py-3.5 text-sm font-semibold"
               >
-                Falar por WhatsApp
+                {c.whatsapp}
               </a>
+              <div className="flex items-center justify-between rounded-full border border-white/25 px-5 py-3">
+                <span className="text-sm font-semibold">{c.idioma}</span>
+                <SeletorIdioma tom="escuro" />
+              </div>
             </div>
           </nav>
         </div>

@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { WHATSAPP_URL } from '../constants.js'
+import { whatsappUrl } from '../constants.js'
 import { useAuth } from '../lib/authContext.js'
 import {
   FOTO_MAX_MB,
@@ -16,6 +16,266 @@ import { isSupabaseConfigured } from '../lib/supabase.js'
 import { fonteVideo, useConteudo } from '../lib/conteudo.js'
 import { useSeo } from '../lib/seo.jsx'
 import { track } from '../lib/track.js'
+import { useIdioma } from '../i18n/idioma.jsx'
+
+const T = {
+  pt: {
+    seoTitulo: 'Candidatura — apresente o teu projecto',
+    seoDescricao:
+      'Submete a tua candidatura em vídeo e fotografia ao TECNATO: gestão, administração, ciência, inovação, empreendedorismo e tecnologia. Sê visto e representa o teu município.',
+    canalPergunta: 'Como queres enviar o vídeo? *',
+    canalPlataformaTitulo: 'Enviar na plataforma',
+    canalPlataformaTexto:
+      'O vídeo fica guardado na nossa nuvem e acompanhas o estado no teu perfil.',
+    canalWhatsappTitulo: 'Enviar por WhatsApp',
+    canalWhatsappTexto: 'Preferes falar? Envias o vídeo directamente na nossa conversa.',
+    canalDica: 'Escolhe acima como queres enviar o vídeo para continuares.',
+    aValidar: 'A validar o vídeo…',
+    aEnviarFoto: (progresso) => `A enviar a foto da equipa… ${progresso}%`,
+    aEnviarVideo: (progresso) => `A enviar o vídeo para a nuvem… ${progresso}%`,
+    aConcluir: 'A concluir a candidatura…',
+    erroVideoTamanho: (tamanho, limite) =>
+      `O vídeo tem ${tamanho}. O limite é ${limite} MB.`,
+    erroVideoDuracao: (duracao, limite) =>
+      `O vídeo tem ${duracao}. O limite é ${limite}.`,
+    erroFotoFormato: 'O ficheiro tem de ser uma imagem (JPG, PNG ou WebP).',
+    erroFotoTamanho: (tamanho, limite) => `A foto tem ${tamanho}. O limite é ${limite} MB.`,
+    erroEquipa: 'Indica o nome da equipa.',
+    erroProjecto: 'Indica o nome do projecto.',
+    erroMunicipio: 'Escolhe o município que representas.',
+    erroArea: 'Escolhe a área do projecto.',
+    erroWhatsapp: 'Indica um WhatsApp válido.',
+    erroEmail: 'Email inválido.',
+    erroDescricao: 'Descreve o projecto com pelo menos 40 caracteres.',
+    erroVideoFalta: (limite) => `Selecciona o vídeo da candidatura (até ${limite}).`,
+    erroFotoFalta: 'Adiciona uma foto da equipa (obrigatória).',
+    erroConsentimento: 'É preciso autorizar o tratamento dos dados.',
+    erroEnvio: 'O envio falhou. Tenta novamente.',
+    sucessoTitulo: 'Envio bem-sucedido!',
+    sucessoTexto:
+      'O vídeo e a foto da equipa foram guardados na nossa nuvem em segurança. A equipa do TECNATO vai analisar a candidatura.',
+    referencia: 'Referência',
+    estadoActual: 'Estado actual: em verificação',
+    copiado: 'Copiado ✓',
+    copiarReferencia: 'Copiar referência',
+    verCandidaturaPerfil: 'Ver a minha candidatura no perfil',
+    voltarInicio: 'Voltar ao início',
+    enviarOutra: 'Enviar outra candidatura',
+    inicio: '← Início',
+    etiqueta: 'Candidatura · Vídeo',
+    titulo1: 'Apresenta a tua equipa e o teu ',
+    destaque: 'projecto',
+    titulo2: '.',
+    introAntes: 'O ',
+    introDepois:
+      ' é uma plataforma de identificação, valorização e visibilidade de talentos, projectos e iniciativas nas áreas da Gestão, Administração, Ciência, Inovação, Empreendedorismo, Tecnologia e outras áreas do conhecimento e da criatividade humana.',
+    envio1: 'Escolhe como queres enviar o ',
+    envioVideo: 'vídeo',
+    envio2: ' (até ',
+    envio3: ' min) e a ',
+    envioFoto: 'foto da equipa',
+    envio4:
+      ' — os dois são obrigatórios. Na plataforma, os ficheiros ficam guardados na nossa nuvem e recebes um código de referência no fim.',
+    videoTitulo: 'Vídeo TECNATO',
+    etiquetaVideo: 'Mostra quem és',
+    silenciar: 'Silenciar',
+    ligarSom: 'Ligar som',
+    legendaVideo: 'O próximo vídeo a ser visto pode ser o teu.',
+    statVideo: 'Vídeo',
+    statVideoTamanho: 'Vídeo (tamanho)',
+    statFoto: 'Foto da equipa',
+    statFormatos: 'Formatos',
+    ateMin: (minutos) => `Até ${minutos} min`,
+    ateMb: (megas) => `Até ${megas} MB`,
+    formatosValor: 'Vídeo + JPG, PNG',
+    whatsappTitulo: 'Enviar por WhatsApp',
+    whatsappPasso1: '1. Abre a nossa conversa no WhatsApp.',
+    whatsappPasso2: (minutos) => `2. Envia o vídeo (até ${minutos} min) `,
+    whatsappPasso2Destaque: 'e a foto da equipa',
+    whatsappPasso2Fim: ' com a mensagem inicial.',
+    whatsappPasso3: '3. A equipa do TECNATO confirma a recepção e indica os próximos passos.',
+    whatsappAbrir: 'Abrir conversa no WhatsApp',
+    prefiroPlataforma: 'Prefiro enviar na plataforma',
+    avisoConta1:
+      'Não precisas de conta para enviar — mas sem conta não consegues acompanhar o estado da candidatura. ',
+    avisoContaCriar: 'Cria conta',
+    avisoContaMeio: ' ou ',
+    avisoContaEntrar: 'entra',
+    avisoContaFim:
+      ' para ficares a acompanhar a verificação e a aprovação no teu perfil.',
+    equipaLabel: 'Nome da equipa *',
+    equipaPlaceholder: 'Ex.: Equipa KixiCasa',
+    projectoLabel: 'Nome do projecto *',
+    projectoPlaceholder: 'Ex.: KixiCasa',
+    municipioLabel: 'Município de Luanda *',
+    municipioPlaceholder: 'Selecciona o município',
+    areaLabel: 'Área do projecto *',
+    areaPlaceholder: 'Selecciona a área',
+    whatsappLabel: 'WhatsApp *',
+    emailLabel: 'Email (opcional)',
+    emailPlaceholder: 'equipa@email.com',
+    descricaoLabel: 'O que o projecto pretende fazer? *',
+    descricaoPlaceholder:
+      'Explica o problema que procuras resolver, a solução proposta e o impacto que queres gerar.',
+    videoLabel: 'Vídeo da candidatura *',
+    trocarVideo: 'Trocar vídeo',
+    escolherVideo: 'Toque para escolher o vídeo',
+    videoAjuda: (minutos, megas) => `MP4, MOV ou WebM · até ${minutos} min · ${megas} MB`,
+    pronto: 'Pronto ✓',
+    fotoLabel: 'Foto da equipa *',
+    trocarFoto: 'Trocar foto',
+    escolherFoto: 'Toque para escolher a foto da equipa',
+    fotoAjuda: (megas) => `JPG, PNG ou WebP · até ${megas} MB`,
+    fotoAlt: 'Pré-visualização da foto da equipa',
+    consentimento:
+      'Autorizo a organização do TECNATO a tratar os meus dados e o vídeo para efeitos de candidatura e divulgação da plataforma. *',
+    consentimentoNota1: 'Ao autorizar, reconheço os termos da ',
+    consentimentoNotaLink: 'Política de privacidade e protecção de projectos',
+    consentimentoNota2: '.',
+    enviar: 'Enviar candidatura',
+    aEnviar: 'A enviar…',
+    rodape1: 'Ao enviar, fica associada à tua conta para acompanhares o estado no ',
+    rodapeLink: 'perfil',
+    rodape2: '. O envio não significa selecção automática.',
+    // Só para apresentação: o valor guardado em cada opção continua em português.
+    areas: [
+      'Gestão e Administração',
+      'Ciência e Investigação',
+      'Tecnologia e Inovação',
+      'Empreendedorismo e Negócios',
+      'Impacto Social e Comunitário',
+      'Invenções e Criações Próprias',
+      'Outra área',
+    ],
+  },
+  en: {
+    seoTitulo: 'Application — present your project',
+    seoDescricao:
+      'Submit your application by video and photo to TECNATO: management, administration, science, innovation, entrepreneurship and technology. Be seen and represent your municipality.',
+    canalPergunta: 'How do you want to send the video? *',
+    canalPlataformaTitulo: 'Send on the platform',
+    canalPlataformaTexto:
+      'The video is stored in our cloud and you can follow its status in your profile.',
+    canalWhatsappTitulo: 'Send via WhatsApp',
+    canalWhatsappTexto: 'Prefer to talk? Send the video directly in our conversation.',
+    canalDica: 'Choose above how you want to send the video to continue.',
+    aValidar: 'Validating the video…',
+    aEnviarFoto: (progresso) => `Uploading the team photo… ${progresso}%`,
+    aEnviarVideo: (progresso) => `Uploading the video to the cloud… ${progresso}%`,
+    aConcluir: 'Finishing your application…',
+    erroVideoTamanho: (tamanho, limite) =>
+      `The video is ${tamanho}. The limit is ${limite} MB.`,
+    erroVideoDuracao: (duracao, limite) =>
+      `The video is ${duracao} long. The limit is ${limite}.`,
+    erroFotoFormato: 'The file must be an image (JPG, PNG or WebP).',
+    erroFotoTamanho: (tamanho, limite) => `The photo is ${tamanho}. The limit is ${limite} MB.`,
+    erroEquipa: 'Enter the team name.',
+    erroProjecto: 'Enter the project name.',
+    erroMunicipio: 'Choose the municipality you represent.',
+    erroArea: 'Choose the project field.',
+    erroWhatsapp: 'Enter a valid WhatsApp number.',
+    erroEmail: 'Invalid email.',
+    erroDescricao: 'Describe the project in at least 40 characters.',
+    erroVideoFalta: (limite) => `Select the application video (up to ${limite}).`,
+    erroFotoFalta: 'Add a team photo (required).',
+    erroConsentimento: 'You must authorise the processing of your data.',
+    erroEnvio: 'The upload failed. Try again.',
+    sucessoTitulo: 'Successfully sent!',
+    sucessoTexto:
+      'The video and the team photo have been stored securely in our cloud. The TECNATO team will review the application.',
+    referencia: 'Reference',
+    estadoActual: 'Current status: under review',
+    copiado: 'Copied ✓',
+    copiarReferencia: 'Copy reference',
+    verCandidaturaPerfil: 'View my application in my profile',
+    voltarInicio: 'Back to home',
+    enviarOutra: 'Send another application',
+    inicio: '← Home',
+    etiqueta: 'Application · Video',
+    titulo1: 'Present your team and your ',
+    destaque: 'project',
+    titulo2: '.',
+    introAntes: '',
+    introDepois:
+      ' is a platform for identifying, valuing and giving visibility to talent, projects and initiatives in the fields of Management, Administration, Science, Innovation, Entrepreneurship, Technology and other areas of knowledge and human creativity.',
+    envio1: 'Choose how you want to send the ',
+    envioVideo: 'video',
+    envio2: ' (up to ',
+    envio3: ' min) and the ',
+    envioFoto: 'team photo',
+    envio4:
+      ' — both are required. On the platform, the files are stored in our cloud and you receive a reference code at the end.',
+    videoTitulo: 'TECNATO video',
+    etiquetaVideo: 'Show who you are',
+    silenciar: 'Mute',
+    ligarSom: 'Turn on sound',
+    legendaVideo: 'The next video to be watched could be yours.',
+    statVideo: 'Video',
+    statVideoTamanho: 'Video (size)',
+    statFoto: 'Team photo',
+    statFormatos: 'Formats',
+    ateMin: (minutos) => `Up to ${minutos} min`,
+    ateMb: (megas) => `Up to ${megas} MB`,
+    formatosValor: 'Video + JPG, PNG',
+    whatsappTitulo: 'Send via WhatsApp',
+    whatsappPasso1: '1. Open our WhatsApp conversation.',
+    whatsappPasso2: (minutos) => `2. Send the video (up to ${minutos} min) `,
+    whatsappPasso2Destaque: 'and the team photo',
+    whatsappPasso2Fim: ' with the opening message.',
+    whatsappPasso3: '3. The TECNATO team confirms receipt and explains the next steps.',
+    whatsappAbrir: 'Open WhatsApp conversation',
+    prefiroPlataforma: 'I prefer to send on the platform',
+    avisoConta1:
+      'You do not need an account to apply — but without one you cannot follow the status of your application. ',
+    avisoContaCriar: 'Create an account',
+    avisoContaMeio: ' or ',
+    avisoContaEntrar: 'sign in',
+    avisoContaFim: ' to follow the verification and approval in your profile.',
+    equipaLabel: 'Team name *',
+    equipaPlaceholder: 'e.g. Team KixiCasa',
+    projectoLabel: 'Project name *',
+    projectoPlaceholder: 'e.g. KixiCasa',
+    municipioLabel: 'Luanda municipality *',
+    municipioPlaceholder: 'Select a municipality',
+    areaLabel: 'Project field *',
+    areaPlaceholder: 'Select a field',
+    whatsappLabel: 'WhatsApp *',
+    emailLabel: 'Email (optional)',
+    emailPlaceholder: 'team@email.com',
+    descricaoLabel: 'What is the project meant to do? *',
+    descricaoPlaceholder:
+      'Explain the problem you want to solve, the proposed solution and the impact you want to create.',
+    videoLabel: 'Application video *',
+    trocarVideo: 'Change video',
+    escolherVideo: 'Tap to choose the video',
+    videoAjuda: (minutos, megas) => `MP4, MOV or WebM · up to ${minutos} min · ${megas} MB`,
+    pronto: 'Ready ✓',
+    fotoLabel: 'Team photo *',
+    trocarFoto: 'Change photo',
+    escolherFoto: 'Tap to choose the team photo',
+    fotoAjuda: (megas) => `JPG, PNG or WebP · up to ${megas} MB`,
+    fotoAlt: 'Team photo preview',
+    consentimento:
+      'I authorise the TECNATO organisation to process my data and the video for application purposes and promotion of the platform. *',
+    consentimentoNota1: 'By authorising, I acknowledge the terms of the ',
+    consentimentoNotaLink: 'Privacy and project protection policy',
+    consentimentoNota2: '.',
+    enviar: 'Send application',
+    aEnviar: 'Sending…',
+    rodape1: 'When you submit, it is linked to your account so you can follow its status in your ',
+    rodapeLink: 'profile',
+    rodape2: '. Submitting does not mean automatic selection.',
+    areas: [
+      'Management and Administration',
+      'Science and Research',
+      'Technology and Innovation',
+      'Entrepreneurship and Business',
+      'Social and Community Impact',
+      'Inventions and Own Creations',
+      'Other field',
+    ],
+  },
+}
 
 const MUNICIPIOS = [
   'Belas',
@@ -67,23 +327,23 @@ function formatSize(bytes) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
-function ChannelChoice({ value, onChange }) {
+function ChannelChoice({ value, onChange, c }) {
   const options = [
     {
       id: 'plataforma',
-      title: 'Enviar na plataforma',
-      text: 'O vídeo fica guardado na nossa nuvem e acompanhas o estado no teu perfil.',
+      title: c.canalPlataformaTitulo,
+      text: c.canalPlataformaTexto,
     },
     {
       id: 'whatsapp',
-      title: 'Enviar por WhatsApp',
-      text: 'Preferes falar? Envias o vídeo directamente na nossa conversa.',
+      title: c.canalWhatsappTitulo,
+      text: c.canalWhatsappTexto,
     },
   ]
 
   return (
     <div className="mt-8">
-      <p className={LABEL_CLASS}>Como queres enviar o vídeo? *</p>
+      <p className={LABEL_CLASS}>{c.canalPergunta}</p>
       <div className="grid gap-3 sm:grid-cols-2">
         {options.map((option) => {
           const active = value === option.id
@@ -117,10 +377,12 @@ function ChannelChoice({ value, onChange }) {
 }
 
 export default function CandidaturaPage() {
+  const { lang } = useIdioma()
+  const c = T[lang]
+
   useSeo({
-    titulo: 'Candidatura — apresente o teu projecto',
-    descricao:
-      'Submete a tua candidatura em vídeo e fotografia ao TECNATO: gestão, administração, ciência, inovação, empreendedorismo e tecnologia. Sê visto e representa o teu município.',
+    titulo: c.seoTitulo,
+    descricao: c.seoDescricao,
     caminho: '/candidatura',
   })
 
@@ -176,14 +438,12 @@ export default function CandidaturaPage() {
   const busy = phase === 'validating' || phase === 'uploading' || phase === 'saving'
 
   const phaseLabel = useMemo(() => {
-    if (phase === 'validating') return 'A validar o vídeo…'
+    if (phase === 'validating') return c.aValidar
     if (phase === 'uploading')
-      return uploadTarget === 'foto'
-        ? `A enviar a foto da equipa… ${progress}%`
-        : `A enviar o vídeo para a nuvem… ${progress}%`
-    if (phase === 'saving') return 'A concluir a candidatura…'
+      return uploadTarget === 'foto' ? c.aEnviarFoto(progress) : c.aEnviarVideo(progress)
+    if (phase === 'saving') return c.aConcluir
     return ''
-  }, [phase, progress, uploadTarget])
+  }, [c, phase, progress, uploadTarget])
 
   function setValue(name, value) {
     setForm((current) => ({ ...current, [name]: value }))
@@ -205,7 +465,7 @@ export default function CandidaturaPage() {
       setVideoDuration(null)
       setErrors((current) => ({
         ...current,
-        video: `O vídeo tem ${formatSize(file.size)}. O limite é ${MAX_SIZE_MB} MB.`,
+        video: c.erroVideoTamanho(formatSize(file.size), MAX_SIZE_MB),
       }))
       return
     }
@@ -217,7 +477,10 @@ export default function CandidaturaPage() {
         setVideoDuration(null)
         setErrors((current) => ({
           ...current,
-          video: `O vídeo tem ${formatDuration(duration)}. O limite é ${formatDuration(MAX_DURATION_SECONDS)}.`,
+          video: c.erroVideoDuracao(
+            formatDuration(duration),
+            formatDuration(MAX_DURATION_SECONDS),
+          ),
         }))
         return
       }
@@ -243,7 +506,7 @@ export default function CandidaturaPage() {
     if (!file.type.startsWith('image/')) {
       setPhoto(null)
       setPhotoUrl('')
-      setErrors((current) => ({ ...current, photo: 'O ficheiro tem de ser uma imagem (JPG, PNG ou WebP).' }))
+      setErrors((current) => ({ ...current, photo: c.erroFotoFormato }))
       return
     }
 
@@ -252,7 +515,7 @@ export default function CandidaturaPage() {
       setPhotoUrl('')
       setErrors((current) => ({
         ...current,
-        photo: `A foto tem ${formatSize(file.size)}. O limite é ${FOTO_MAX_MB} MB.`,
+        photo: c.erroFotoTamanho(formatSize(file.size), FOTO_MAX_MB),
       }))
       return
     }
@@ -265,17 +528,16 @@ export default function CandidaturaPage() {
   function validate() {
     const next = {}
 
-    if (form.equipa.trim().length < 2) next.equipa = 'Indica o nome da equipa.'
-    if (form.projecto.trim().length < 2) next.projecto = 'Indica o nome do projecto.'
-    if (!form.municipio) next.municipio = 'Escolhe o município que representas.'
-    if (!form.area) next.area = 'Escolhe a área do projecto.'
-    if (form.whatsapp.replace(/\D/g, '').length < 9) next.whatsapp = 'Indica um WhatsApp válido.'
-    if (form.email && !/^\S+@\S+\.\S+$/.test(form.email)) next.email = 'Email inválido.'
-    if (form.descricao.trim().length < 40)
-      next.descricao = 'Descreve o projecto com pelo menos 40 caracteres.'
-    if (!video) next.video = `Selecciona o vídeo da candidatura (até ${formatDuration(MAX_DURATION_SECONDS)}).`
-    if (!photo) next.photo = 'Adiciona uma foto da equipa (obrigatória).'
-    if (!form.consent) next.consent = 'É preciso autorizar o tratamento dos dados.'
+    if (form.equipa.trim().length < 2) next.equipa = c.erroEquipa
+    if (form.projecto.trim().length < 2) next.projecto = c.erroProjecto
+    if (!form.municipio) next.municipio = c.erroMunicipio
+    if (!form.area) next.area = c.erroArea
+    if (form.whatsapp.replace(/\D/g, '').length < 9) next.whatsapp = c.erroWhatsapp
+    if (form.email && !/^\S+@\S+\.\S+$/.test(form.email)) next.email = c.erroEmail
+    if (form.descricao.trim().length < 40) next.descricao = c.erroDescricao
+    if (!video) next.video = c.erroVideoFalta(formatDuration(MAX_DURATION_SECONDS))
+    if (!photo) next.photo = c.erroFotoFalta
+    if (!form.consent) next.consent = c.erroConsentimento
 
     setErrors(next)
     return Object.keys(next).length === 0
@@ -332,7 +594,7 @@ export default function CandidaturaPage() {
     } catch (error) {
       setPhase('idle')
       setProgress(0)
-      setSubmitError(error.message || 'O envio falhou. Tenta novamente.')
+      setSubmitError(error.message || c.erroEnvio)
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
@@ -374,24 +636,21 @@ export default function CandidaturaPage() {
           className="rounded-2xl border border-green-300 bg-green-50 p-6 text-center sm:p-8"
         >
           <p className="flex items-center justify-center gap-2 text-lg font-semibold text-green-900">
-            <span aria-hidden="true">✓</span> Envio bem-sucedido!
+            <span aria-hidden="true">✓</span> {c.sucessoTitulo}
           </p>
-          <p className="mt-2 text-sm leading-relaxed text-green-900/80">
-            O vídeo e a foto da equipa foram guardados na nossa nuvem em segurança. A equipa do
-            TECNATO vai analisar a candidatura.
-          </p>
+          <p className="mt-2 text-sm leading-relaxed text-green-900/80">{c.sucessoTexto}</p>
         </div>
 
         <div className="mt-6 rounded-2xl border border-line bg-white p-6 text-center">
-          <p className="text-xs tracking-widest text-ink/50 uppercase">Referência</p>
+          <p className="text-xs tracking-widest text-ink/50 uppercase">{c.referencia}</p>
           <p className="mt-2 font-display text-3xl font-bold tracking-widest">{reference}</p>
-          <p className="mt-2 text-sm text-ink/60">Estado actual: em verificação</p>
+          <p className="mt-2 text-sm text-ink/60">{c.estadoActual}</p>
           <button
             type="button"
             onClick={copyReference}
             className="mt-4 min-h-11 rounded-full border border-ink/20 px-5 py-2.5 text-sm font-semibold transition-colors hover:border-ink"
           >
-            {copied ? 'Copiado ✓' : 'Copiar referência'}
+            {copied ? c.copiado : c.copiarReferencia}
           </button>
         </div>
 
@@ -401,7 +660,7 @@ export default function CandidaturaPage() {
               to="/perfil"
               className="flex min-h-12 items-center justify-center rounded-full bg-ink px-6 py-3.5 text-sm font-semibold text-white"
             >
-              Ver a minha candidatura no perfil
+              {c.verCandidaturaPerfil}
             </Link>
           )}
           <Link
@@ -410,14 +669,14 @@ export default function CandidaturaPage() {
               user ? 'border border-ink/25' : 'bg-ink text-white'
             }`}
           >
-            Voltar ao início
+            {c.voltarInicio}
           </Link>
           <button
             type="button"
             onClick={reset}
             className="flex min-h-12 items-center justify-center rounded-full border border-ink/25 px-6 py-3.5 text-sm font-semibold"
           >
-            Enviar outra candidatura
+            {c.enviarOutra}
           </button>
         </div>
       </section>
@@ -427,27 +686,30 @@ export default function CandidaturaPage() {
   return (
     <section className="mx-auto max-w-6xl px-5 py-10 sm:px-8 sm:py-16">
       <Link to="/" className="text-sm font-semibold text-ink/60 hover:text-ink">
-        ← Início
+        {c.inicio}
       </Link>
 
       <div className="mt-8 grid gap-10 lg:grid-cols-2 lg:gap-16">
         <div>
-          <p className="section-label text-ink/55">Candidatura · Vídeo</p>
+          <p className="section-label text-ink/55">{c.etiqueta}</p>
           <h1 className="mt-5 text-4xl leading-[0.92] font-semibold tracking-[-0.055em] sm:text-5xl">
-            Apresenta a tua equipa e o teu{' '}
-            <em className="editorial-serif font-normal tracking-[-0.04em]">projecto</em>.
+            {c.titulo1}
+            <em className="editorial-serif font-normal tracking-[-0.04em]">{c.destaque}</em>
+            {c.titulo2}
           </h1>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-ink/70">
-            O <strong>TECNATO</strong> é uma plataforma de identificação, valorização e
-            visibilidade de talentos, projectos e iniciativas nas áreas da Gestão, Administração,
-            Ciência, Inovação, Empreendedorismo, Tecnologia e outras áreas do conhecimento e da
-            criatividade humana.
+            {c.introAntes}
+            <strong>TECNATO</strong>
+            {c.introDepois}
           </p>
           <p className="mt-3 max-w-xl text-base leading-relaxed text-ink/70">
-            Escolhe como queres enviar o <strong>vídeo</strong> (até{' '}
-            {MAX_DURATION_SECONDS / 60} min) e a <strong>foto da equipa</strong> — os dois são
-            obrigatórios. Na plataforma, os ficheiros ficam guardados na nossa nuvem e recebes um
-            código de referência no fim.
+            {c.envio1}
+            <strong>{c.envioVideo}</strong>
+            {c.envio2}
+            {MAX_DURATION_SECONDS / 60}
+            {c.envio3}
+            <strong>{c.envioFoto}</strong>
+            {c.envio4}
           </p>
           {(() => {
             const videoCandidatura = fonteVideo(conteudo.candidatura.videoUrl)
@@ -457,7 +719,7 @@ export default function CandidaturaPage() {
                 {videoCandidatura.tipo === 'iframe' ? (
                   <iframe
                     src={videoCandidatura.src}
-                    title="Vídeo TECNATO"
+                    title={c.videoTitulo}
                     className="aspect-video w-full"
                     allow="autoplay; encrypted-media; picture-in-picture"
                     allowFullScreen
@@ -473,17 +735,17 @@ export default function CandidaturaPage() {
                   />
                 )}
                 <p className="absolute top-4 left-4 bg-brand px-3 py-2 font-mono text-[10px] tracking-[0.14em] uppercase">
-                  Mostra quem és
+                  {c.etiquetaVideo}
                 </p>
                 <button
                   type="button"
                   onClick={alternarSom}
                   className="absolute top-4 right-4 bg-ink/85 px-3 py-2 font-mono text-[10px] tracking-[0.14em] text-white uppercase backdrop-blur-sm transition-colors hover:bg-brand hover:text-ink"
                 >
-                  {somLigado ? 'Silenciar' : 'Ligar som'}
+                  {somLigado ? c.silenciar : c.ligarSom}
                 </button>
                 <figcaption className="absolute right-4 bottom-4 max-w-52 text-right font-mono text-[10px] leading-relaxed tracking-[0.1em] uppercase text-white/85">
-                  O próximo vídeo a ser visto pode ser o teu.
+                  {c.legendaVideo}
                 </figcaption>
               </figure>
             )
@@ -493,10 +755,10 @@ export default function CandidaturaPage() {
         <div>
           <ul className="grid grid-cols-2 gap-3">
             {[
-              ['Vídeo', `Até ${MAX_DURATION_SECONDS / 60} min`],
-              ['Vídeo (tamanho)', `Até ${MAX_SIZE_MB} MB`],
-              ['Foto da equipa', `Até ${FOTO_MAX_MB} MB`],
-              ['Formatos', 'Vídeo + JPG, PNG'],
+              [c.statVideo, c.ateMin(MAX_DURATION_SECONDS / 60)],
+              [c.statVideoTamanho, c.ateMb(MAX_SIZE_MB)],
+              [c.statFoto, c.ateMb(FOTO_MAX_MB)],
+              [c.statFormatos, c.formatosValor],
             ].map(([label, value]) => (
               <li key={label} className="border border-line bg-white px-4 py-3">
                 <p className="font-mono text-[10px] tracking-[0.12em] text-ink/50 uppercase">
@@ -508,6 +770,7 @@ export default function CandidaturaPage() {
           </ul>
 
           <ChannelChoice
+            c={c}
             value={channel}
             onChange={(value) => {
               setChannel(value)
@@ -515,11 +778,7 @@ export default function CandidaturaPage() {
             }}
           />
 
-          {channel === null && (
-            <p className="mt-5 text-sm text-ink/55">
-              Escolhe acima como queres enviar o vídeo para continuares.
-            </p>
-          )}
+          {channel === null && <p className="mt-5 text-sm text-ink/55">{c.canalDica}</p>}
         </div>
       </div>
 
@@ -536,45 +795,45 @@ export default function CandidaturaPage() {
 
       {channel === 'whatsapp' && (
         <div className="mt-6 rounded-2xl border border-line bg-white p-5 sm:p-6">
-          <h2 className="text-lg font-semibold">Enviar por WhatsApp</h2>
+          <h2 className="text-lg font-semibold">{c.whatsappTitulo}</h2>
           <ol className="mt-3 space-y-2 text-sm leading-relaxed text-ink/70">
-            <li>1. Abre a nossa conversa no WhatsApp.</li>
+            <li>{c.whatsappPasso1}</li>
             <li>
-              2. Envia o vídeo (até {MAX_DURATION_SECONDS / 60} min) <strong>e a foto da equipa</strong>{' '}
-              com a mensagem inicial.
+              {c.whatsappPasso2(MAX_DURATION_SECONDS / 60)}
+              <strong>{c.whatsappPasso2Destaque}</strong>
+              {c.whatsappPasso2Fim}
             </li>
-            <li>3. A equipa do TECNATO confirma a recepção e indica os próximos passos.</li>
+            <li>{c.whatsappPasso3}</li>
           </ol>
           <a
-            href={WHATSAPP_URL}
+            href={whatsappUrl(lang)}
             target="_blank"
             rel="noreferrer"
             className="mt-5 flex min-h-12 w-full items-center justify-center rounded-full bg-ink px-6 py-3.5 text-sm font-semibold text-white"
           >
-            Abrir conversa no WhatsApp
+            {c.whatsappAbrir}
           </a>
           <button
             type="button"
             onClick={() => setChannel('plataforma')}
             className="mt-3 flex min-h-12 w-full items-center justify-center rounded-full border border-ink/25 px-6 py-3.5 text-sm font-semibold"
           >
-            Prefiro enviar na plataforma
+            {c.prefiroPlataforma}
           </button>
         </div>
       )}
 
       {channel === 'plataforma' && !user && (
         <div className="mt-6 rounded-2xl border border-line bg-white p-4 text-sm leading-relaxed text-ink/70 sm:p-5">
-          Não precisas de conta para enviar — mas sem conta não consegues acompanhar o estado da
-          candidatura.{' '}
+          {c.avisoConta1}
           <Link to="/registar" className="font-semibold text-ink underline underline-offset-2">
-            Cria conta
-          </Link>{' '}
-          ou{' '}
+            {c.avisoContaCriar}
+          </Link>
+          {c.avisoContaMeio}
           <Link to="/entrar" className="font-semibold text-ink underline underline-offset-2">
-            entra
-          </Link>{' '}
-          para ficares a acompanhar a verificação e a aprovação no teu perfil.
+            {c.avisoContaEntrar}
+          </Link>
+          {c.avisoContaFim}
         </div>
       )}
 
@@ -587,14 +846,14 @@ export default function CandidaturaPage() {
           <div className="grid gap-5 sm:grid-cols-2">
             <div className="sm:col-span-1">
               <label className={LABEL_CLASS} htmlFor="equipa">
-                Nome da equipa *
+                {c.equipaLabel}
               </label>
               <input
                 id="equipa"
                 className={FIELD_CLASS}
                 value={form.equipa}
                 onChange={(event) => setValue('equipa', event.target.value)}
-                placeholder="Ex.: Equipa KixiCasa"
+                placeholder={c.equipaPlaceholder}
                 autoComplete="organization"
               />
               {errors.equipa && <p className="mt-1.5 text-xs text-red-600">{errors.equipa}</p>}
@@ -602,21 +861,21 @@ export default function CandidaturaPage() {
 
             <div className="sm:col-span-1">
               <label className={LABEL_CLASS} htmlFor="projecto">
-                Nome do projecto *
+                {c.projectoLabel}
               </label>
               <input
                 id="projecto"
                 className={FIELD_CLASS}
                 value={form.projecto}
                 onChange={(event) => setValue('projecto', event.target.value)}
-                placeholder="Ex.: KixiCasa"
+                placeholder={c.projectoPlaceholder}
               />
               {errors.projecto && <p className="mt-1.5 text-xs text-red-600">{errors.projecto}</p>}
             </div>
 
             <div>
               <label className={LABEL_CLASS} htmlFor="municipio">
-                Município de Luanda *
+                {c.municipioLabel}
               </label>
               <select
                 id="municipio"
@@ -624,7 +883,7 @@ export default function CandidaturaPage() {
                 value={form.municipio}
                 onChange={(event) => setValue('municipio', event.target.value)}
               >
-                <option value="">Selecciona o município</option>
+                <option value="">{c.municipioPlaceholder}</option>
                 {MUNICIPIOS.map((municipio) => (
                   <option key={municipio} value={municipio}>
                     {municipio}
@@ -636,7 +895,7 @@ export default function CandidaturaPage() {
 
             <div>
               <label className={LABEL_CLASS} htmlFor="area">
-                Área do projecto *
+                {c.areaLabel}
               </label>
               <select
                 id="area"
@@ -644,10 +903,10 @@ export default function CandidaturaPage() {
                 value={form.area}
                 onChange={(event) => setValue('area', event.target.value)}
               >
-                <option value="">Selecciona a área</option>
-                {AREAS.map((area) => (
+                <option value="">{c.areaPlaceholder}</option>
+                {AREAS.map((area, index) => (
                   <option key={area} value={area}>
-                    {area}
+                    {c.areas[index]}
                   </option>
                 ))}
               </select>
@@ -656,7 +915,7 @@ export default function CandidaturaPage() {
 
             <div>
               <label className={LABEL_CLASS} htmlFor="whatsapp">
-                WhatsApp *
+                {c.whatsappLabel}
               </label>
               <input
                 id="whatsapp"
@@ -673,7 +932,7 @@ export default function CandidaturaPage() {
 
             <div>
               <label className={LABEL_CLASS} htmlFor="email">
-                Email (opcional)
+                {c.emailLabel}
               </label>
               <input
                 id="email"
@@ -682,7 +941,7 @@ export default function CandidaturaPage() {
                 className={FIELD_CLASS}
                 value={form.email}
                 onChange={(event) => setValue('email', event.target.value)}
-                placeholder="equipa@email.com"
+                placeholder={c.emailPlaceholder}
                 autoComplete="email"
               />
               {errors.email && <p className="mt-1.5 text-xs text-red-600">{errors.email}</p>}
@@ -690,7 +949,7 @@ export default function CandidaturaPage() {
 
             <div className="sm:col-span-2">
               <label className={LABEL_CLASS} htmlFor="descricao">
-                O que o projecto pretende fazer? *
+                {c.descricaoLabel}
               </label>
               <textarea
                 id="descricao"
@@ -699,7 +958,7 @@ export default function CandidaturaPage() {
                 className={`${FIELD_CLASS} resize-y`}
                 value={form.descricao}
                 onChange={(event) => setValue('descricao', event.target.value)}
-                placeholder="Explica o problema que procuras resolver, a solução proposta e o impacto que queres gerar."
+                placeholder={c.descricaoPlaceholder}
               />
               <div className="mt-1.5 flex items-baseline justify-between gap-3">
                 {errors.descricao ? (
@@ -712,7 +971,7 @@ export default function CandidaturaPage() {
             </div>
 
             <div className="sm:col-span-2">
-              <span className={LABEL_CLASS}>Vídeo da candidatura *</span>
+              <span className={LABEL_CLASS}>{c.videoLabel}</span>
               <input
                 ref={fileInputRef}
                 type="file"
@@ -726,10 +985,10 @@ export default function CandidaturaPage() {
                 className="flex min-h-24 w-full flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-line bg-paper px-4 py-6 text-center transition-colors hover:border-ink/40"
               >
                 <span className="text-sm font-semibold">
-                  {video ? 'Trocar vídeo' : 'Toque para escolher o vídeo'}
+                  {video ? c.trocarVideo : c.escolherVideo}
                 </span>
                 <span className="text-xs text-ink/50">
-                  MP4, MOV ou WebM · até {MAX_DURATION_SECONDS / 60} min · {MAX_SIZE_MB} MB
+                  {c.videoAjuda(MAX_DURATION_SECONDS / 60, MAX_SIZE_MB)}
                 </span>
               </button>
 
@@ -742,7 +1001,7 @@ export default function CandidaturaPage() {
                     </p>
                   </div>
                   <span className="shrink-0 rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-800">
-                    Pronto ✓
+                    {c.pronto}
                   </span>
                 </div>
               )}
@@ -751,7 +1010,7 @@ export default function CandidaturaPage() {
             </div>
 
             <div className="sm:col-span-2">
-              <span className={LABEL_CLASS}>Foto da equipa *</span>
+              <span className={LABEL_CLASS}>{c.fotoLabel}</span>
               <input
                 ref={photoInputRef}
                 type="file"
@@ -765,16 +1024,16 @@ export default function CandidaturaPage() {
                 className="flex min-h-24 w-full flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-line bg-paper px-4 py-6 text-center transition-colors hover:border-ink/40"
               >
                 <span className="text-sm font-semibold">
-                  {photo ? 'Trocar foto' : 'Toque para escolher a foto da equipa'}
+                  {photo ? c.trocarFoto : c.escolherFoto}
                 </span>
-                <span className="text-xs text-ink/50">JPG, PNG ou WebP · até {FOTO_MAX_MB} MB</span>
+                <span className="text-xs text-ink/50">{c.fotoAjuda(FOTO_MAX_MB)}</span>
               </button>
 
               {photo && (
                 <div className="mt-3 flex items-center gap-3 rounded-xl border border-line bg-paper px-4 py-3">
                   <img
                     src={photoUrl}
-                    alt="Pré-visualização da foto da equipa"
+                    alt={c.fotoAlt}
                     className="h-14 w-14 shrink-0 rounded-lg border border-line object-cover"
                   />
                   <div className="min-w-0 flex-1">
@@ -782,7 +1041,7 @@ export default function CandidaturaPage() {
                     <p className="text-xs text-ink/55">{formatSize(photo.size)}</p>
                   </div>
                   <span className="shrink-0 rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-800">
-                    Pronto ✓
+                    {c.pronto}
                   </span>
                 </div>
               )}
@@ -798,17 +1057,14 @@ export default function CandidaturaPage() {
                   onChange={(event) => setValue('consent', event.target.checked)}
                   className="mt-0.5 h-5 w-5 shrink-0 accent-brand"
                 />
-                <span>
-                  Autorizo a organização do TECNATO a tratar os meus dados e o vídeo para efeitos de
-                  candidatura e divulgação da plataforma. *
-                </span>
+                <span>{c.consentimento}</span>
               </label>
               <p className="mt-1.5 text-xs text-ink/60">
-                Ao autorizar, reconheço os termos da{' '}
+                {c.consentimentoNota1}
                 <Link to="/politica-de-privacidade" className="font-semibold underline underline-offset-2 hover:text-ink">
-                  Política de privacidade e protecção de projectos
+                  {c.consentimentoNotaLink}
                 </Link>
-                .
+                {c.consentimentoNota2}
               </p>
               {errors.consent && <p className="mt-1.5 text-xs text-red-600">{errors.consent}</p>}
             </div>
@@ -831,19 +1087,19 @@ export default function CandidaturaPage() {
             disabled={busy || !isSupabaseConfigured}
             className="mt-6 flex min-h-12 w-full items-center justify-center rounded-full bg-ink px-6 py-4 text-sm font-semibold text-white transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-40"
           >
-            {busy ? 'A enviar…' : 'Enviar candidatura'}
+            {busy ? c.aEnviar : c.enviar}
           </button>
 
           <p className="mt-3 text-xs leading-relaxed text-ink/50">
-            Ao enviar, fica associada à tua conta para acompanhares o estado no{' '}
+            {c.rodape1}
             <button
               type="button"
               onClick={() => navigate('/perfil')}
               className="font-semibold text-ink underline underline-offset-2"
             >
-              perfil
+              {c.rodapeLink}
             </button>
-            . O envio não significa selecção automática.
+            {c.rodape2}
           </p>
         </form>
       )}

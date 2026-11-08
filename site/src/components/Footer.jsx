@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { EMAIL, NAV_LINKS, WHATSAPP_URL } from '../constants.js'
+import { EMAIL, NAV_LINKS, NAV_TEXTOS, whatsappUrl } from '../constants.js'
+import { useIdioma } from '../i18n/idioma.jsx'
 
 const REDES_SOCIAIS = [
   {
@@ -32,10 +33,10 @@ const REDES_SOCIAIS = [
   },
   {
     nome: 'WhatsApp',
-    href: WHATSAPP_URL,
+    href: whatsappUrl('pt'),
     icone: (
       <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className="h-5 w-5">
-        <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 2.17.56 4.21 1.55 5.94L2.2 23l6.99-1.83c2.02.85 4.27 1.33 6.66 1.33 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm3.72 12.38c-.18-.12-.9-.66-1.12-.78-.22-.12-.4-.12-.57-.12-.29 0-.72.13-1 .39-.33.26-.58.68-.58 1.11 0 .3.08.63.24.87.15.23.34.56.54.83.22.29.3.65.24.8-.08.18-.42.43-.78.64-.46.27-1.02.5-1.36.67-.33.16-.76.19-1.06.07-.29-.13-1.1-.45-1.5-.88-.4-.43-.65-.95-.65-1.38 0-.29.1-.53.29-.71.18-.18.48-.5.87-.87.28-.27.4-.54.4-.85 0-.24-.13-.5-.3-.67-.17-.16-.53-.36-.94-.47-.3-.08-.58-.08-.78 0-.2.09-.47.29-.68.48-.22.2-.4.4-.56.58-.17.18-.38.3-.5.39-.13.1-.25.1-.37.1-.13 0-.25-.09-.37-.21a1.93 1.93 0 0 1-.5-.67 1.9 1.9 0 0 1-.14-.7c0-.25.12-.42.31-.52.21-.12 2.44-2.1 2.72-2.3.2-.13.4-.13.6 0 .18.13.3.32.38.5.06.15.06.29-.03.42-.1.14-.37.48-.68.83-.4.46-.75.92-1 .92-.13 0-.25-.08-.38-.23z" />
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.37-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413" />
       </svg>
     ),
   },
@@ -52,13 +53,45 @@ const REDES_SOCIAIS = [
 
 const YEAR = new Date().getFullYear()
 
+const T = {
+  pt: {
+    partilhar: 'Partilhar o TECNATO',
+    copiado: 'Link copiado — ajuda-nos a encontrar os génios.',
+    navegacao: 'Navegação',
+    contactos: 'Contactos oficiais',
+    local: 'Local de arranque: Luanda, Angola',
+    privacidade: 'Política de privacidade',
+    assinatura: 'Dos bairros às universidades · De Luanda para Angola',
+    partilhaTitulo: 'TECNATO — A luz para os génios da banda',
+    partilhaTexto: 'Conhece o TECNATO: a plataforma que dá visibilidade aos talentos e projectos de Angola.',
+    redes: 'TECNATO no',
+    lema: 'O talento merece ser visto. As ideias merecem ser ouvidas. O potencial merece uma oportunidade.',
+  },
+  en: {
+    partilhar: 'Share TECNATO',
+    copiado: 'Link copied — help us find the geniuses.',
+    navegacao: 'Navigation',
+    contactos: 'Official contacts',
+    local: 'Starting point: Luanda, Angola',
+    privacidade: 'Privacy policy',
+    assinatura: 'From neighbourhoods to universities · From Luanda to Angola',
+    partilhaTitulo: 'TECNATO — The light for the neighbourhood geniuses',
+    partilhaTexto: 'Meet TECNATO: the platform that gives visibility to Angola’s talents and projects.',
+    redes: 'TECNATO on',
+    lema: 'Talent deserves to be seen. Ideas deserve to be heard. Potential deserves an opportunity.',
+  },
+}
+
 export default function Footer() {
   const [copied, setCopied] = useState(false)
+  const { lang } = useIdioma()
+  const c = T[lang]
+  const nav = NAV_TEXTOS[lang]
 
   async function handleShare() {
     const shareData = {
-      title: 'TECNATO — A luz para os génios da banda',
-      text: 'Conhece o TECNATO: a plataforma que dá visibilidade aos talentos e projectos de Angola.',
+      title: c.partilhaTitulo,
+      text: c.partilhaTexto,
       url: window.location.href,
     }
 
@@ -85,31 +118,26 @@ export default function Footer() {
               alt="TECNATO"
               className="h-12 w-auto brightness-0 invert"
             />
-            <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/65">
-              O talento merece ser visto. As ideias merecem ser ouvidas. O potencial merece uma
-              oportunidade.
-            </p>
+            <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/65">{c.lema}</p>
             <button
               type="button"
               onClick={handleShare}
               className="mt-6 inline-flex items-center gap-2 rounded-full border border-white/25 px-5 py-2.5 text-sm font-semibold transition-colors hover:border-brand hover:text-brand"
             >
-              Partilhar o TECNATO
+              {c.partilhar}
               <span aria-hidden="true">↗</span>
             </button>
-            {copied && (
-              <p className="mt-2 text-xs text-brand">Link copiado — ajuda-nos a encontrar os génios.</p>
-            )}
+            {copied && <p className="mt-2 text-xs text-brand">{c.copiado}</p>}
 
             <div className="mt-6 flex items-center gap-5">
               {REDES_SOCIAIS.map((rede) => (
                 <a
                   key={rede.nome}
-                  href={rede.href}
+                  href={rede.nome === 'WhatsApp' ? whatsappUrl(lang) : rede.href}
                   target="_blank"
                   rel="noreferrer"
-                  aria-label={`TECNATO no ${rede.nome}`}
-                  title={`TECNATO no ${rede.nome}`}
+                  aria-label={`${c.redes} ${rede.nome}`}
+                  title={`${c.redes} ${rede.nome}`}
                   className="text-white/60 transition-colors hover:text-brand"
                 >
                   {rede.icone}
@@ -119,7 +147,7 @@ export default function Footer() {
           </div>
 
           <nav className="lg:col-span-3">
-            <p className="section-label text-white/40">Navegação</p>
+            <p className="section-label text-white/40">{c.navegacao}</p>
             <ul className="mt-4 space-y-2.5">
               {NAV_LINKS.map((link) => (
                 <li key={link.href}>
@@ -128,14 +156,14 @@ export default function Footer() {
                       to={link.href}
                       className="text-sm text-white/70 transition-colors hover:text-brand"
                     >
-                      {link.label}
+                      {nav[link.chave]}
                     </Link>
                   ) : (
                     <a
                       href={link.href}
                       className="text-sm text-white/70 transition-colors hover:text-brand"
                     >
-                      {link.label}
+                      {nav[link.chave]}
                     </a>
                   )}
                 </li>
@@ -144,26 +172,29 @@ export default function Footer() {
           </nav>
 
           <div className="lg:col-span-4">
-            <p className="section-label text-white/40">Contactos oficiais</p>
+            <p className="section-label text-white/40">{c.contactos}</p>
             <ul className="mt-4 space-y-3 text-sm text-white/70">
               <li>
                 <a href={`mailto:${EMAIL}`} className="transition-colors hover:text-brand">
                   {EMAIL}
                 </a>
               </li>
-              <li>Local de arranque: Luanda, Angola</li>
+              <li>{c.local}</li>
             </ul>
           </div>
         </div>
 
         <div className="mt-12 flex flex-col gap-3 border-t border-white/10 pt-6 text-xs text-white/45 sm:flex-row sm:items-center sm:justify-between">
           <p>
-            © {YEAR} TECNATO — A luz para os génios da banda.{' '}
-            <Link to="/politica-de-privacidade" className="underline decoration-white/30 underline-offset-4 transition-colors hover:text-brand">
-              Política de privacidade
+            © {YEAR} TECNATO — {c.partilhaTitulo.split('— ')[1] || ''}{' '}
+            <Link
+              to="/politica-de-privacidade"
+              className="underline decoration-white/30 underline-offset-4 transition-colors hover:text-brand"
+            >
+              {c.privacidade}
             </Link>
           </p>
-          <p className="tracking-[0.18em] uppercase">Dos bairros às universidades · De Luanda para Angola</p>
+          <p className="uppercase tracking-[0.18em]">{c.assinatura}</p>
         </div>
       </div>
     </footer>

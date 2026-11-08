@@ -26,10 +26,50 @@
 <body>
   <div class="container">
     <div class="code">404</div>
-    <h1>Página não encontrada</h1>
-    <p>A página que procuras não existe ou foi movida.<br>Volta ao início ou contacta-nos.</p>
-    <a href="https://tecnatoangola.com/">← Voltar ao início</a>
-    <a href="https://wa.me/244935073125" target="_blank" rel="noreferrer" class="whatsapp">Falar no WhatsApp</a>
+    <h1 id="titulo">Página não encontrada</h1>
+    <p id="texto">A página que procuras não existe ou foi movida.<br />Volta ao início ou contacta-nos.</p>
+    <a id="voltar" href="https://tecnatoangola.com/">← Voltar ao início</a>
+    <a id="whatsapp" href="https://wa.me/244935073125" target="_blank" rel="noreferrer" class="whatsapp">Falar no WhatsApp</a>
   </div>
+  <script>
+    // A 404 é servida estaticamente pelo Netlify, fora do React: escolhe o idioma
+    // guardado pelo site (ou do browser) sem depender do bundle.
+    ;(function () {
+      var pt = {
+        html: 'pt-AO',
+        titulo: 'Página não encontrada — TECNATO',
+        heading: 'Página não encontrada',
+        texto: 'A página que procuras não existe ou foi movida.<br />Volta ao início ou contacta-nos.',
+        voltar: '← Voltar ao início',
+        whatsapp: 'Falar no WhatsApp',
+        descricao: 'A página que procuraste não existe. Volta ao início do TECNATO.'
+      }
+      var en = {
+        html: 'en',
+        titulo: 'Page not found — TECNATO',
+        heading: 'Page not found',
+        texto: 'The page you are looking for does not exist or has been moved.<br />Go back home or talk to us.',
+        voltar: '← Back to home',
+        whatsapp: 'Chat on WhatsApp',
+        descricao: 'The page you were looking for does not exist. Go back to the TECNATO home page.'
+      }
+      var idioma = null
+      try { idioma = localStorage.getItem('tecnato:idioma') } catch (e) {}
+      if (idioma !== 'pt' && idioma !== 'en') {
+        idioma = (navigator.language || '').toLowerCase().indexOf('pt') === 0 ? 'pt' : 'en'
+      }
+      var t = idioma === 'en' ? en : pt
+      document.documentElement.lang = t.html
+      document.title = t.titulo
+      document.getElementById('titulo').textContent = t.heading
+      document.getElementById('texto').innerHTML = t.texto
+      document.getElementById('voltar').textContent = t.voltar
+      document.getElementById('whatsapp').textContent = t.whatsapp
+      var ogTitulo = document.querySelector('meta[property="og:title"]')
+      var ogDesc = document.querySelector('meta[property="og:description"]')
+      if (ogTitulo) ogTitulo.setAttribute('content', t.titulo)
+      if (ogDesc) ogDesc.setAttribute('content', t.descricao)
+    })()
+  </script>
 </body>
 </html>

@@ -1,5 +1,25 @@
 import { useState, useEffect } from 'react'
 import { useConteudo } from '../lib/conteudo.js'
+import { useIdioma } from '../i18n/idioma.jsx'
+
+const T = {
+  pt: {
+    canalPrincipal: 'Canal principal',
+    ariaCanal: 'Canal principal do TECNATO no YouTube',
+    fecharAnuncio: 'Fechar anúncio',
+    videoTecnato: 'Vídeo TECNATO',
+    imagemAnuncio: 'Imagem do anúncio',
+    naoMostrar: 'Não mostrar novamente',
+  },
+  en: {
+    canalPrincipal: 'Main channel',
+    ariaCanal: 'TECNATO main channel on YouTube',
+    fecharAnuncio: 'Close announcement',
+    videoTecnato: 'TECNATO video',
+    imagemAnuncio: 'Announcement image',
+    naoMostrar: "Don't show again",
+  },
+}
 
 // SVG do YouTube
 const YouTubeIcon = () => (
@@ -24,6 +44,8 @@ const PlayIcon = () => (
 
 function FloatingYouTubeButton() {
   const conteudo = useConteudo()
+  const { lang } = useIdioma()
+  const c = T[lang]
   const youtubeUrl = 'https://www.youtube.com/@tecnatoangola'
 
   // Botão flutuante fixo à esquerda
@@ -32,12 +54,12 @@ function FloatingYouTubeButton() {
       href={youtubeUrl}
       target="_blank"
       rel="noreferrer"
-      aria-label="Canal principal do TECNATO no YouTube"
+      aria-label={c.ariaCanal}
       className="fixed left-4 top-1/2 -translate-y-1/2 z-50 flex items-center gap-3 bg-ink text-white px-4 py-3 rounded-r-2xl shadow-xl border border-line transition-all duration-300 hover:bg-brand hover:text-ink hover:shadow-[0_0_30px_rgba(255,160,0,0.4)] hover:scale-105 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-ink lg:left-6"
       style={{ transform: 'translateY(-50%)' }}
     >
       <YouTubeIcon />
-      <span className="font-mono text-[10px] tracking-[0.1em] uppercase whitespace-nowrap hidden sm:inline">Canal principal</span>
+      <span className="font-mono text-[10px] tracking-[0.1em] uppercase whitespace-nowrap hidden sm:inline">{c.canalPrincipal}</span>
     </a>
   )
 }
@@ -45,6 +67,8 @@ function FloatingYouTubeButton() {
 // Componente do Popup/Modal
 export function SitePopup() {
   const conteudo = useConteudo()
+  const { lang } = useIdioma()
+  const c = T[lang]
   const [isOpen, setIsOpen] = useState(false)
   const [showAgain, setShowAgain] = useState(true)
   const popup = conteudo.popup
@@ -116,7 +140,7 @@ export function SitePopup() {
           type="button"
           onClick={() => handleClose(false)}
           className="absolute top-3 right-3 z-10 p-1.5 rounded-full bg-white/90 text-ink/60 hover:bg-white hover:text-ink transition-colors focus:outline-none focus:ring-2 focus:ring-brand"
-          aria-label="Fechar anúncio"
+          aria-label={c.fecharAnuncio}
         >
           <CloseIcon />
         </button>
@@ -135,7 +159,7 @@ export function SitePopup() {
               <div className="aspect-video w-full rounded-xl overflow-hidden bg-ink">
                 <iframe
                   src={youtubeEmbedUrl}
-                  title={titulo || 'Vídeo TECNATO'}
+                  title={titulo || c.videoTecnato}
                   allow="autoplay; encrypted-media; picture-in-picture"
                   allowFullScreen
                   className="w-full h-full"
@@ -147,7 +171,7 @@ export function SitePopup() {
               <div className="aspect-video w-full rounded-xl overflow-hidden bg-ink-soft">
                 <img
                   src={imagemUrl}
-                  alt={titulo || 'Imagem do anúncio'}
+                  alt={titulo || c.imagemAnuncio}
                   className="w-full h-full object-cover"
                   loading="lazy"
                 />
@@ -182,7 +206,7 @@ export function SitePopup() {
               onChange={(e) => setShowAgain(!e.target.checked)}
               className="h-4 w-4 rounded border-line text-brand focus:ring-brand focus:ring-2"
             />
-            <span className="text-sm text-ink/60">Não mostrar novamente</span>
+            <span className="text-sm text-ink/60">{c.naoMostrar}</span>
           </label>
         </div>
       </div>
