@@ -11,6 +11,18 @@ const NVIDIA_MODEL = process.env.NVIDIA_MODEL || 'nvidia/nemotron-3-ultra-550b-a
 // Streaming de IA pode demorar — aumenta o tempo limite da função.
 export const maxDuration = 60
 
+// Limite de espera pela NVIDIA (a função na Vercel corta aos 60s;
+// se a NVIDIA não responder a tempo, respondemos com fallback em vez de 504).
+const NVIDIA_TIMEOUT_MS = 22000
+
+function fetchComTimeout(url, options = {}, ms) {
+  const ctrl = new AbortController()
+  const timer = setTimeout(() => ctrl.abort(), ms)
+  return fetch(url, { ...options, signal: ctrl.signal }).finally(() => clearTimeout(timer))
+}
+
+const MENSAGEM_FALLBACK = 'De momento o Tecnocrata está com dificuldade a responder. Podes explorar o site ou falar com a equipa. [LINK:/candidatura|Formulário de candidatura] [LINK:https://wa.me/244935073125|Falar por WhatsApp]'
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS')
@@ -37,7 +49,8 @@ export default async function handler(req, res) {
   }
 
   const meta = { sessaoId, visitanteId, pagina, userAgent: req.headers['user-agent'], modelo: NVIDIA_MODEL }
-  await registar(meta, 'user', message)
+  // Regista sem bloquear a resposta (com timeout próprio).
+  registar(meta, 'user', message).catch(() => {})
 
   const mensagens = [{ role: 'system', content: systemPrompt || 'És o assistente do TECNATO.' }]
   if (Array.isArray(history)) {
@@ -51,7 +64,7 @@ export default async function handler(req, res) {
   mensagens.push({ role: 'user', content: message })
 
   try {
-    const resposta = await fetch('https://integrate.api.nvidia.com/v1/chat/completions', {
+    const resposta = await fetchComTimeout('https://integrate.api.nvidia.com/v1/chat/completions', {
       method: 'POST',
       headers: { Authorization: `Bearer ${NVIDIA_API_KEY}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -61,13 +74,13 @@ export default async function handler(req, res) {
         temperature: temperature || 0.7,
         ...(stream ? { stream: true } : {}),
       }),
-    })
+    }, NVIDIA_TIMEOUT_MS)
 
     if (!resposta.ok) {
       const txt = await resposta.text().catch(() => '')
       console.error('[ai-chat] NVIDIA', resposta.status, txt.slice(0, 300))
-      await registar(meta, 'erro', `NVIDIA ${resposta.status}`)
-      return res.status(400).json({ error: 'Não foi possível obter resposta do modelo.' })
+      registar(meta, 'erro', `NVIDIA ${resposta.status}`).catch(() => {})
+      return res.status(200).json({ content: MENSAGEM_FALLBACK })
     }
 
     if (stream && resposta.body) {
@@ -88,24 +101,28 @@ export default async function handler(req, res) {
       }
       res.end()
       const texto = textoDeSSE(bruto)
-      if (texto.trim()) await registar(meta, 'assistant', texto)
+      if (texto.trim()) registar(meta, 'assistant', texto).catch(() => {})
       return
     }
 
     const data = await resposta.json()
     const content = data.choices?.[0]?.message?.content || ''
-    if (content.trim()) await registar(meta, 'assistant', content)
-    return res.status(200).json({ content })
+    if (content.trim()) {
+      registar(meta, 'assistant', content).catch(() => {})
+      return res.status(200).json({ content })
+    }
+    return res.status(200).json({ content: MENSAGEM_FALLBACK })
   } catch (e) {
     console.error('[ai-chat] erro:', e?.message)
-    await registar(meta, 'erro', String(e?.message || 'erro').slice(0, 400))
+    registar(meta, 'erro', String(e?.message || 'erro').slice(0, 400)).catch(() => {})
     // Se o streaming já começou, as headers foram enviadas — só fecha.
     if (res.headersSent) return res.end()
-    return res.status(500).json({ error: 'Erro de conexão.' })
+    return res.status(200).json({ content: MENSAGEM_FALLBACK })
   }
 }
 
 // ── Registo de conversas (mesma BD do admin: ai_conversas / ai_mensagens) ──
+// Nunca pode bloquear a resposta: timeout curto em cada pedido.
 async function registar({ sessaoId, visitanteId, pagina, userAgent, modelo }, papel, conteudo) {
   if (!SUPABASE_URL || !SERVICE_KEY) return
   try {
@@ -120,7 +137,7 @@ async function registar({ sessaoId, visitanteId, pagina, userAgent, modelo }, pa
       Prefer: 'return=representation',
     }
 
-    const upsert = await fetch(
+    const upsert = await fetchComTimeout(
       `${SUPABASE_URL}/rest/v1/ai_conversas?on_conflict=sessao_id&columns=sessao_id`,
       {
         method: 'POST',
@@ -134,30 +151,32 @@ async function registar({ sessaoId, visitanteId, pagina, userAgent, modelo }, pa
           actualizado_em: new Date().toISOString(),
         }),
       },
+      5000,
     )
     if (!upsert.ok) throw new Error(`upsert ${upsert.status}`)
     const [conversa] = await upsert.json()
     const conversaId = conversa?.id
     if (!conversaId) return
 
-    const ins = await fetch(`${SUPABASE_URL}/rest/v1/ai_mensagens`, {
+    const ins = await fetchComTimeout(`${SUPABASE_URL}/rest/v1/ai_mensagens`, {
       method: 'POST',
       headers: { ...headers, Prefer: 'return=minimal' },
       body: JSON.stringify([{ conversa_id: conversaId, papel, conteudo: texto, modelo: modelo || null }]),
-    })
+    }, 5000)
     if (!ins.ok) throw new Error(`insert ${ins.status}`)
 
-    const contagem = await fetch(
+    const contagem = await fetchComTimeout(
       `${SUPABASE_URL}/rest/v1/ai_mensagens?select=id&conversa_id=eq.${conversaId}`,
       { headers: { ...headers, Prefer: 'count=exact', Range: '0-0' } },
+      5000,
     )
     const total = Number(String(contagem.headers.get('content-range') || '').split('/')[1]) || 0
     if (total > 0) {
-      await fetch(`${SUPABASE_URL}/rest/v1/ai_conversas?id=eq.${conversaId}`, {
+      await fetchComTimeout(`${SUPABASE_URL}/rest/v1/ai_conversas?id=eq.${conversaId}`, {
         method: 'PATCH',
         headers: { ...headers, Prefer: 'return=minimal' },
         body: JSON.stringify({ total_mensagens: total, actualizado_em: new Date().toISOString() }),
-      })
+      }, 5000)
     }
   } catch (e) {
     console.warn('[ai-log] falha ao registar:', e?.message)
