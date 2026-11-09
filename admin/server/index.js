@@ -43,6 +43,15 @@ const ADMIN_ORIGINS = String(ADMIN_ORIGIN || '')
   .map((origem) => origem.trim())
   .filter(Boolean)
 
+// Na Vercel, o domínio do projeto e o URL de cada deploy são conhecidos pelo
+// runtime. Assim os previews e o domínio *.vercel.app funcionam sem os listar
+// todos em ADMIN_ORIGIN (que continua a ser obrigatório em produção).
+for (const url of [process.env.VERCEL_PROJECT_PRODUCTION_URL, process.env.VERCEL_URL]) {
+  if (!url) continue
+  const origem = `https://${url}`
+  if (!ADMIN_ORIGINS.includes(origem)) ADMIN_ORIGINS.push(origem)
+}
+
 const app = express()
 app.disable('x-powered-by')
 app.set('trust proxy', 1)
@@ -650,8 +659,10 @@ app.post(
     if (!ext) return res.status(400).json({ error: 'Formato não suportado (usa JPG, PNG, WEBP ou SVG).' })
     const buffer = Buffer.from(String(dataBase64 || ''), 'base64')
     if (!buffer.length) return res.status(400).json({ error: 'Ficheiro vazio.' })
-    if (buffer.length > 4_000_000) {
-      return res.status(400).json({ error: 'Ficheiro demasiado grande (máx. 4 MB).' })
+    // Vercel limita o corpo do pedido a 4,5 MB e o base64 cresce ~33%:
+    // 3 MB de ficheiro → ~4 MB de JSON, com margem de segurança.
+    if (buffer.length > 3_000_000) {
+      return res.status(400).json({ error: 'Ficheiro demasiado grande (máx. 3 MB).' })
     }
     const nomeSeguro = String(nome || 'ficheiro')
       .replace(/\.[a-zA-Z0-9]{1,5}$/, '')

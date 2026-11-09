@@ -1,0 +1,16 @@
+# Ficheiros que não precisam de ir para a Vercel.
+# (O build do Vite é feito lá; as variáveis vêm do dashboard.)
+node_modules
+dist
+netlify
+scripts
+dev.log
+api.log
+*.log
+.env
+.env.*
+!.env.example
+netlify-env-import.txt
+check-ai.mjs
+clean-test-conversas.mjs
+gen-token.mjs

@@ -3,4 +3,7 @@
 // A escuta (listen) fica desligada em serverless — ver server/index.js.
 import app from '../server/index.js'
 
+// Exportação de Excel e streaming da IA podem demorar — limite da função.
+export const maxDuration = 60
+
 export default app

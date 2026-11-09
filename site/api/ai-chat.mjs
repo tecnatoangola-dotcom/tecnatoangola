@@ -24,7 +24,12 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Serviço de IA não configurado.' })
   }
 
-  const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {})
+  let body
+  try {
+    body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {})
+  } catch {
+    return res.status(400).json({ error: 'JSON inválido.' })
+  }
 
   const { message, history, systemPrompt, temperature, maxTokens, stream, sessaoId, visitanteId, pagina } = body
   if (!message) {
@@ -94,6 +99,8 @@ export default async function handler(req, res) {
   } catch (e) {
     console.error('[ai-chat] erro:', e?.message)
     await registar(meta, 'erro', String(e?.message || 'erro').slice(0, 400))
+    // Se o streaming já começou, as headers foram enviadas — só fecha.
+    if (res.headersSent) return res.end()
     return res.status(500).json({ error: 'Erro de conexão.' })
   }
 }

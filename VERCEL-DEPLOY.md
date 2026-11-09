@@ -1,58 +1,186 @@
 # Publicar na Vercel — passo a passo
 
-> Monorepo: dois projetos Vercel a partir de UM repositório GitHub
+> Monorepo: **dois** projetos Vercel a partir de UM repositório GitHub
 > (`tecnatoangola-dotcom/tecnatoangola`). Atualizado em 2026-11-09.
+>
+> Estrutura já preparada para a Vercel:
+> - `site/` → frontend Vite + funções em `site/api/`
+> - `admin/` → frontend Vite + API Express em `admin/api/[[...path]].mjs`
 
-## 1. Variáveis de ambiente
+---
 
-Vercel Dashboard → cada projeto → **Settings → Environment Variables**.
+## 0. Antes de começar
 
-Os valores estão prontos em `publicar/ENV-NETLIFY.txt` (copia linha a linha;
-o nome do ficheiro é legado — os valores servem para a Vercel também).
+- Repositório já está no GitHub (`master`).
+- Conta em <https://vercel.com> (Hobby serve para testes; para uso comercial
+  a Vercel exige o plano **Pro**).
+- Node.js local ≥ 22.12 (o `package.json` já fixa `"engines": { "node": "22.x" }`).
+- Os valores das variáveis estão em `publicar/ENV-NETLIFY.txt`
+  (o nome é legado — os valores servem para a Vercel).
 
-**Projeto site (`tecnatoangola.com`):**
-`SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `NVIDIA_API_KEY`, `NVIDIA_MODEL`,
-`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_SUPABASE_BUCKET`,
-`VITE_MAX_VIDEO_MB`, `NODE_ENV=production`
+> ⚠️ **Nunca** escolhas a raiz do repositório como Root Directory. Cada projeto
+> usa a sua pasta (`site` ou `admin`). Se a raiz for escolhida, o build falha
+> porque o `package.json` da raiz só tem o `lint`.
 
-**Projeto admin (`admin.tecnatoangola.com`):**
-`SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `SUPABASE_BUCKET`, `SUPABASE_BUCKET_PERFIS`,
-`ADMIN_SECRET`, `ADMIN_USERS` (JSON), `ADMIN_ORIGIN` (domínio do admin na Vercel —
-ex.: `https://tecnatoangolaadmin005.vercel.app` ou o custom domain),
-`ADMIN_AI_API_KEY`, `ADMIN_AI_MODEL`, `NODE_ENV=production`
+---
 
-⚠️ `VITE_*` são **embutidas no build** — mudar uma `VITE_` exige novo deploy.
-O resto só entra no deploy seguinte (fonctions leem no runtime).
+## 1. Projeto do SITE
 
-## 2. Importar os dois projetos
+1. <https://vercel.com/new> → **Import Git Repository** → `tecnatoangola`.
+2. Configuração:
+   - **Project Name:** `tecnatoangola` (ou outro)
+   - **Root Directory:** `site`
+   - **Framework Preset:** `Vite` (já forçado pelo `site/vercel.json`)
+   - **Build Command:** `npm run build`
+   - **Output Directory:** `dist`
+   - **Install Command:** `npm install`
+3. **Environment Variables** (Production + Preview + Development):
 
-1. https://vercel.com/new → **Import** do repo `tecnatoangola`.
-2. **Root Directory** = `site` → Deploy. (Vite detectada; build `vite build` →
-   `dist`; functions em `site/api/`.)
-3. **Add New → Project** → mesmo repo → **Root Directory** = `admin` → Deploy.
-   (API via `admin/api/[[...path]].mjs` → Express de `admin/server/index.js`.)
-4. Domínios: site → `tecnatoangola.com`; admin → `admin.tecnatoangola.com`
-   (Domain management; adicionar os registos DNS que a Vercel indicar).
+   | Variável | Obrigatória | Notas |
+   |---|---|---|
+   | `SUPABASE_URL` | sim | lida pela função `/api/conteudo` e `/api/ai-chat` |
+   | `SUPABASE_SERVICE_KEY` | sim | só no servidor (nunca vai para o browser) |
+   | `NVIDIA_API_KEY` | sim | chat Tecnocrata |
+   | `NVIDIA_MODEL` | não | por omissão `nvidia/nemotron-3-ultra-550b-a55b` |
+   | `VITE_SUPABASE_URL` | sim | **entra no build** (redeploy ao mudar) |
+   | `VITE_SUPABASE_ANON_KEY` | sim | **entra no build** |
+   | `VITE_SUPABASE_BUCKET` | sim | normalmente `candidaturas` |
+   | `VITE_MAX_VIDEO_MB` | não | por omissão 30 |
+   | `NODE_ENV` | sim | `production` |
 
-## 3. Verificar
+4. **Deploy**.
 
-- `https://<site>.vercel.app/api/conteudo` → JSON (sem `apiKey` — sanitizado)
-- `https://<site>.vercel.app/api/ai-chat` (GET) → 405 (só POST) = função viva
-- `https://<admin>.vercel.app/api/health` → `{"ok":true,…}`
-- `https://<admin>.vercel.app/api/diagnostico` → `supabase_ok: true`, `n_admins: 2`
+### Funções do site (já existem no repo)
 
-## Paridade Netlify ↔ Vercel (já tratada)
+| Rota | Ficheiro | Runtime |
+|---|---|---|
+| `/api/conteudo` | `site/api/conteudo.mjs` | Node 22 |
+| `/api/ai-chat` | `site/api/ai-chat.mjs` | Node 22, streaming SSE, `maxDuration=60` |
 
-| Netlify (pasta arrastada) | Vercel (repo) |
+A função `/api/conteudo` remove campos que pareçam segredos (`apiKey`,
+`secret`, `password`, `token`) antes de responder.
+
+---
+
+## 2. Projeto do ADMIN
+
+1. <https://vercel.com/new> → mesmo repositório → **Add New → Project**.
+2. Configuração:
+   - **Root Directory:** `admin`
+   - **Framework Preset:** `Vite` (já forçado pelo `admin/vercel.json`)
+   - **Build Command:** `npm run build`
+   - **Output Directory:** `dist`
+3. **Environment Variables**:
+
+   | Variável | Obrigatória | Notas |
+   |---|---|---|
+   | `SUPABASE_URL` | sim | |
+   | `SUPABASE_SERVICE_KEY` | sim | |
+   | `SUPABASE_BUCKET` | sim | `candidaturas` |
+   | `SUPABASE_BUCKET_PERFIS` | sim | `perfis` |
+   | `ADMIN_SECRET` | sim | ≥ 32 caracteres |
+   | `ADMIN_USERS` | sim | JSON com os hashes scrypt (copiar exatamente) |
+   | `ADMIN_ORIGIN` | sim | domínio(s) do admin, separados por vírgula — ex.: `https://tecnatoangolaadmin.vercel.app,https://admin.tecnatoangola.com` |
+   | `ADMIN_AI_API_KEY` | não | se usares o teste de IA no CRM |
+   | `ADMIN_AI_MODEL` | não | |
+   | `NODE_ENV` | sim | `production` |
+
+   > O código já aceita automaticamente o domínio `*.vercel.app` do projeto e
+   > os URLs de preview (`VERCEL_URL` / `VERCEL_PROJECT_PRODUCTION_URL`).
+   > `ADMIN_ORIGIN` continua obrigatório e deve incluir o domínio final.
+   >
+   > **Porquê:** mesmo em same-origin, o browser envia o header `Origin` nos
+   > POST. Se o domínio não estiver na lista, o login falha com erro de CORS.
+
+4. **Deploy**.
+
+### API do admin
+
+- `admin/api/[[...path]].mjs` exporta diretamente o Express de
+  `admin/server/index.js` (todas as rotas `/api/*`).
+- `maxDuration = 60` (exportação Excel e streaming da IA).
+- `admin/server/index.js` **não** faz `listen` quando `process.env.VERCEL` existe.
+- Dependências (`express`, `exceljs`, `@supabase/supabase-js`, …) vêm do
+  `admin/package.json`; a Vercel instala-as sozinha.
+
+---
+
+## 3. Domínios
+
+1. Projeto do site → **Settings → Domains** → `tecnatoangola.com`
+   (e `www.tecnatoangola.com` se quiseres).
+2. Projeto do admin → **Settings → Domains** → `admin.tecnatoangola.com`.
+3. A Vercel mostra os registos DNS (normalmente `A 76.76.21.21` e/ou
+   `CNAME cname.vercel-dns.com`). Aplica-os no painel do domínio.
+4. Só depois de o DNS propagar é que o certificado HTTPS é emitido.
+
+> Não apagues o projeto Netlify até confirmares que a Vercel está 100% —
+> serve de rollback imediato (basta voltar a apontar o DNS).
+
+---
+
+## 4. Verificação pós-deploy
+
+Substitui `<site>` e `<admin>` pelos URLs da Vercel:
+
+- `https://<site>/` → site abre, imagens carregam (Cloudinary).
+- `https://<site>/api/conteudo` → JSON `{ "conteudo": … }` **sem** `apiKey`.
+- `https://<site>/api/ai-chat` (GET) → `405` = função viva.
+- Chat Tecnocrata responde e faz streaming.
+- Registo/login de utilizador no site.
+- `https://<admin>/api/health` → `{"ok":true,...}`.
+- `https://<admin>/api/diagnostico` → `supabase_ok: true`, `n_admins: 2`.
+- Login no admin (`/login`) → entra no dashboard.
+- Upload de imagem em **Site** no admin.
+- Exportação Excel (Candidaturas → exportar).
+- Navegar direto para `/perfil` e atualizar a página (rewrite SPA).
+
+---
+
+## 5. Diferenças Netlify ↔ Vercel (já tratadas no código)
+
+| Netlify | Vercel |
 |---|---|
-| `netlify.toml` redirects/headers | `vercel.json` rewrites + headers |
-| `netlify/functions/conteudo.mjs` | `site/api/conteudo.mjs` (com sanitização) |
+| `netlify.toml` (redirects/headers) | `vercel.json` (`rewrites` + `headers`) |
+| `netlify/functions/conteudo.mjs` | `site/api/conteudo.mjs` |
 | `netlify/functions/ai-chat.mjs` (v2/SSE) | `site/api/ai-chat.mjs` (`req,res`, `maxDuration=60`) |
-| `netlify/functions/api.mjs` (bundle esbuild) | `admin/api/[[...path]].mjs` direto ao Express (deps via `package.json`) |
-| variáveis + arrastar de novo | variáveis no dashboard + redeploy |
-| scan de segredos (`SECRETS_SCAN_OMIT_KEYS`) | não existe na Vercel |
+| `netlify/functions/api.mjs` (bundle esbuild) | `admin/api/[[...path]].mjs` (Express direto) |
+| arrastar pasta compilada | build automático no Git push |
+| `SECRETS_SCAN_OMIT_KEYS` | não existe (segredos ficam no dashboard) |
+| `.env` incluído na função | variáveis do dashboard; `.env` no `.vercelignore` |
 
-**O bundle esbuild (`ADMIN-NETLIFY-ARRASTAR/netlify/functions/api.mjs`) só é
-necessário no Netlify.** Na Vercel, o Node instala `express`, `@supabase/supabase-js`,
-`exceljs`, `serverless-http`… a partir de `admin/package.json` e o Express é
-exportado diretamente como função.
+### Limites da Vercel que afetam o projeto
+
+| Limite | Valor | Impacto tratado |
+|---|---|---|
+| Corpo do pedido | **4,5 MB** | upload do admin limitado a **3 MB** (base64 cresce ~33%) |
+| Resposta da função | 4,5 MB | exportação Excel muito grande pode falhar (raro) |
+| Duração da função | até 60 s (configurado) | chat/Excel |
+| Sistema de ficheiros | só leitura (`/tmp`) | o projeto não escreve ficheiros no disco |
+| Node | 22.x | fixado em `engines` nos dois `package.json` |
+
+> As imagens da galeria/hero são servidas pelo **Cloudinary** com
+> `w_…,q_auto,f_auto` — não passam pela Vercel e não gastam banda da função.
+
+---
+
+## 6. Problemas comuns
+
+| Sintoma | Causa provável | Correção |
+|---|---|---|
+| Build falha: “No build script” | Root Directory = raiz do repo | mudar para `site` ou `admin` |
+| `404` em `/api/...` | pasta `api/` não publicada | confirmar Root Directory e redeploy |
+| `500` na função | variável em falta | ver **Functions → Logs** na Vercel |
+| Login admin dá erro/CORS | `ADMIN_ORIGIN` sem o domínio atual | adicionar o domínio e redeploy |
+| “Sessão expirada” logo após login | cookie `secure` sem HTTPS | usar o domínio HTTPS da Vercel |
+| Upload “demasiado grande” | ficheiro > 3 MB | comprimir antes de enviar |
+| Site branco após deploy | build antigo em cache | **Redeploy** e limpar cache do browser |
+| Imagens não atualizam | cache do Cloudinary | muda o nome/versão do ficheiro no Cloudinary |
+
+---
+
+## 7. Rollback para Netlify
+
+O deploy Netlify continua documentado em `PUBLICAR-NETLIFY.md` e as pastas
+`publicar/SITE-NETLIFY-ARRASTAR` e `publicar/ADMIN-NETLIFY-ARRASTAR` não foram
+alteradas. Para voltar atrás: aponta o DNS para a Netlify e reativa o site lá.
