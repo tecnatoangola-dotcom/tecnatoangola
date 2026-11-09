@@ -18,6 +18,12 @@
 - Os valores das variáveis estão em `publicar/ENV-NETLIFY.txt`
   (o nome é legado — os valores servem para a Vercel).
 
+> ⚠️ **Branch:** o trabalho é enviado para `master`, mas o branch por omissão
+> do GitHub é `main` (já alinhado com `master` neste momento). Em cada projeto
+> da Vercel, define **Settings → Git → Production Branch = `master`** para que
+> os deploys automáticos sigam os teus pushes.
+
+
 > ⚠️ **Nunca** escolhas a raiz do repositório como Root Directory. Cada projeto
 > usa a sua pasta (`site` ou `admin`). Se a raiz for escolhida, o build falha
 > porque o `package.json` da raiz só tem o `lint`.
