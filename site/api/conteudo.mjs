@@ -14,8 +14,23 @@ export default async function handler(_req, res) {
     const rows = await r.json()
     const conteudo = {}
     if (Array.isArray(rows)) for (const row of rows) conteudo[row.chave] = row.valor
+    // Segurança: nunca expor chaves de API ao browser (igual à function Netlify).
+    sanitizar(conteudo)
     res.status(r.ok ? 200 : 500).json({ conteudo })
   } catch (e) {
     res.status(500).json({ error: 'Falha ao carregar conteúdo: ' + e.message })
+  }
+}
+
+function sanitizar(obj) {
+  if (Array.isArray(obj)) {
+    for (const item of obj) sanitizar(item)
+    return
+  }
+  if (obj && typeof obj === 'object') {
+    for (const k of Object.keys(obj)) {
+      if (/api[-_]?key|secret|password|token/i.test(k)) delete obj[k]
+      else sanitizar(obj[k])
+    }
   }
 }

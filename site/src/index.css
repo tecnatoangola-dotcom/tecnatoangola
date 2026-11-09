@@ -24,6 +24,8 @@
     background-color: var(--color-paper);
     color: var(--color-ink);
     -webkit-font-smoothing: antialiased;
+    /* Nunca scroll horizontal no telemóvel */
+    overflow-x: clip;
   }
 
   ::selection {
@@ -37,6 +39,9 @@
   }
 
   * { border-radius: 0 !important; }
+
+  /* Exceção: botão flutuante do Tecnocrata é redondo (pedido do cliente) */
+  button.tecnocrata-fab { border-radius: 9999px !important; }
 }
 
 @keyframes marquee {

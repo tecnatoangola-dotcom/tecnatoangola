@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { CONTEUDO_PADRAO, ConteudoContext } from './conteudo.js'
 import { supabase } from './supabase.js'
+import { otimizarConteudo } from './imagem.js'
 
 // Via 1 (preferida): a function /api/conteudo (builds Git/Netlify function).
 // Via 2 (fallback directo ao Supabase, pelo browser, com a anon key):
@@ -51,7 +52,7 @@ export function ConteudoProvider({ children }) {
             proximo[chave] = { ...CONTEUDO_PADRAO[chave], ...(valor || {}) }
           }
         }
-        return proximo
+        return otimizarConteudo(proximo)
       })
     }
 

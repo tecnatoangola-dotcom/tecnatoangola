@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useConteudo } from '../lib/conteudo.js'
+import { otimizarImagem } from '../lib/imagem.js'
 import { whatsappUrl } from '../constants.js'
 import { useIdioma } from '../i18n/idioma.jsx'
 
@@ -68,7 +69,7 @@ const T = {
 }
 
 // Logo oficial do Tecnato (nuvem)
-const LOGO_TECNATO_URL = 'https://res.cloudinary.com/cqdjtwze/image/upload/v1792692837/TECNATO_2.png'
+const LOGO_TECNATO_URL = otimizarImagem('https://res.cloudinary.com/cqdjtwze/image/upload/v1792692837/TECNATO_2.png', 400)
 
 // Avatar oficial do Tecnato — usado no header e nas respostas da AI
 function AvatarTecnato({ className = 'h-8 w-8' }) {
@@ -375,7 +376,7 @@ export default function AISupport() {
 
   const aiConfig = conteudo.aiSupport || {}
 
-  // Imagens disponíveis para o AI
+  // Imagens disponíveis para o AI (otimizadas: 2,2 MB → ~100 KB)
   const aiImages = [
     { src: 'https://res.cloudinary.com/cqdjtwze/image/upload/v1793381441/Treino_Desportivo_com_Tecnologia_TECNATO.png', alt: 'Treino desportivo com tecnologia TECNATO' },
     { src: 'https://res.cloudinary.com/cqdjtwze/image/upload/v1793381313/Tecnato_Creative_Studio_Collaboration.png', alt: 'Tecnato Creative Studio Collaboration' },
@@ -387,7 +388,7 @@ export default function AISupport() {
     { src: 'https://res.cloudinary.com/cqdjtwze/image/upload/v1792692872/da-ideia-ao-negocio.png', alt: 'Da ideia ao negócio TECNATO' },
     { src: 'https://res.cloudinary.com/cqdjtwze/image/upload/v1792692872/elias-retrato.png', alt: 'Elias Sebastião - CTO & Co-Fundador TECNATO' },
     { src: 'https://res.cloudinary.com/cqdjtwze/image/upload/v1792692874/garcia-retrato.png', alt: 'Garcia Manuel - CEO e Fundador TECNATO' },
-  ]
+  ].map((i) => ({ ...i, src: otimizarImagem(i.src, 1000) }))
 
   // Páginas do site para o AI conhecer
   const sitePages = [
@@ -653,7 +654,7 @@ HORA: ${new Date().toLocaleString('pt-PT')}`
       <button
         type="button"
         onClick={toggleChat}
-        className={`fixed bottom-24 right-4 z-50 h-14 w-14 sm:bottom-6 sm:right-6 sm:h-16 sm:w-16 rounded-full shadow-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-ink flex items-center justify-center overflow-hidden
+        className={`tecnocrata-fab fixed bottom-24 right-4 z-50 h-14 w-14 sm:bottom-6 sm:right-6 sm:h-16 sm:w-16 rounded-full shadow-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-ink flex items-center justify-center overflow-hidden
           ${isOpen && !isMinimized ? 'scale-0 opacity-0 pointer-events-none' : 'scale-100 opacity-100'}
           ${isOpen && isMinimized ? 'scale-100 opacity-100' : ''}
         `}
@@ -682,7 +683,7 @@ HORA: ${new Date().toLocaleString('pt-PT')}`
 
       {/* Chat Window */}
       {isOpen && (
-        <div className={`fixed bottom-24 right-4 z-50 w-full max-w-sm sm:bottom-6 sm:right-6 sm:max-w-md lg:max-w-lg transition-all duration-300 ${isMinimized ? 'h-14' : 'h-[500px] sm:h-[600px]'} animate-slide-up`}>
+        <div className={`fixed bottom-24 left-4 right-4 z-50 sm:bottom-6 sm:left-auto sm:right-6 sm:w-full sm:max-w-md lg:max-w-lg transition-all duration-300 ${isMinimized ? 'h-14' : 'h-[500px] sm:h-[600px]'} animate-slide-up`}>
           <div
             ref={chatRef}
             className={`h-full flex flex-col rounded-2xl bg-white shadow-2xl border border-line overflow-hidden ${isMinimized ? 'rounded-full' : 'rounded-2xl'}`}

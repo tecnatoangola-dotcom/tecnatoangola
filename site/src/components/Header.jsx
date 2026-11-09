@@ -90,7 +90,7 @@ export default function Header() {
           </nav>
 
           <div className="flex h-full items-center gap-0 lg:justify-self-end">
-            <div className="mr-2 hidden sm:block">
+            <div className="mr-2 block">
               <SeletorIdioma />
             </div>
             <Link
