@@ -113,15 +113,52 @@ A função `/api/conteudo` remove campos que pareçam segredos (`apiKey`,
 
 ## 3. Domínios
 
+> **Situação atual:** o site foi apagado da Netlify e o domínio
+> `tecnatoangola.com` continua com os nameservers da Netlify
+> (`dns*.p08.nsone.net`), que já não respondem → o domínio está offline.
+> É obrigatório alterar isto no **Hostinger** (ver abaixo).
+
 1. Projeto do site → **Settings → Domains** → `tecnatoangola.com`
    (e `www.tecnatoangola.com` se quiseres).
 2. Projeto do admin → **Settings → Domains** → `admin.tecnatoangola.com`.
-3. A Vercel mostra os registos DNS (normalmente `A 76.76.21.21` e/ou
-   `CNAME cname.vercel-dns.com`). Aplica-os no painel do domínio.
-4. Só depois de o DNS propagar é que o certificado HTTPS é emitido.
+3. A Vercel mostra os registos DNS necessários. Aplica-os no Hostinger.
 
-> Não apagues o projeto Netlify até confirmares que a Vercel está 100% —
-> serve de rollback imediato (basta voltar a apontar o DNS).
+### Hostinger — duas formas
+
+**Opção A — usar os nameservers da Vercel (mais simples)**
+
+No Hostinger: **hPanel → Domínios → tecnatoangola.com → Nameservers →
+Alterar nameservers** → escolher “Usar nameservers personalizados”:
+
+```
+ns1.vercel-dns.com
+ns2.vercel-dns.com
+```
+
+Depois a Vercel trata de tudo (SSL incluído). Se tiveres email no domínio,
+confirma que os registos MX são recriados na Vercel.
+
+**Opção B — manter o DNS no Hostinger (recomendado se houver email)**
+
+1. No Hostinger, volta a pôr os nameservers padrão
+   (`ns1.dns-parking.com`, `ns2.dns-parking.com`).
+2. Em **hPanel → Domínios → DNS / Zona DNS**, adiciona os registos que a
+   Vercel indicar. Normalmente:
+
+   | Tipo | Nome | Valor |
+   |---|---|---|
+   | A | `@` | `76.76.21.21` |
+   | CNAME | `www` | `cname.vercel-dns.com` |
+   | CNAME | `admin` | `cname.vercel-dns.com` |
+   | TXT | `_vercel` | (valor de verificação que a Vercel mostra) |
+
+   > Usa sempre os valores exatos que aparecem no dashboard da Vercel.
+
+3. Só depois de o DNS propagar é que o certificado HTTPS é emitido.
+
+> **Rollback:** o site da Netlify foi apagado. Se for preciso voltar atrás,
+> cria um novo site na Netlify e publica a pasta
+> `publicar/SITE-NETLIFY-ARRASTAR` (já compilada).
 
 ---
 
