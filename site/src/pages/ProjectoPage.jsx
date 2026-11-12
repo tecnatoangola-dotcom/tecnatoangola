@@ -19,6 +19,6 @@ export default function ProjectoPage() {
   const { lang } = useIdioma()
   const c = T[lang]
 
-  useSeo({ titulo: c.titulo, descricao: c.descricao, caminho: '/projecto' })
+  useSeo({ titulo: c.titulo, descricao: c.descricao, caminho: '/projecto', tipoPagina: 'projecto', lang })
   return <Projecto />
 }

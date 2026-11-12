@@ -19,6 +19,6 @@ export default function ComoFuncionaPage() {
   const { lang } = useIdioma()
   const c = T[lang]
 
-  useSeo({ titulo: c.titulo, descricao: c.descricao, caminho: '/como-funciona' })
+  useSeo({ titulo: c.titulo, descricao: c.descricao, caminho: '/como-funciona', tipoPagina: 'como-funciona', lang })
   return <ComoFunciona />
 }

@@ -96,6 +96,8 @@ export default function Perfil() {
     titulo: c.seoTitulo,
     caminho: '/perfil',
     noindex: true,
+    tipoPagina: 'perfil',
+    lang,
   })
 
   const { user, loading, signOut } = useAuth()

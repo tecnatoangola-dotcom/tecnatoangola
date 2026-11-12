@@ -1,5 +1,25 @@
+# robots.txt para TECNATO Angola
+# Gerado automaticamente no build — não editar manualmente
+
 User-agent: *
 Allow: /
-Disallow: /perfil
 
+# Páginas privadas / autenticação (noindex no HTML + disallow aqui)
+Disallow: /perfil
+Disallow: /entrar
+Disallow: /registar
+Disallow: /recuperar
+Disallow: /redefinir
+Disallow: /confirmacao
+
+# APIs (não indexar)
+Disallow: /api/
+
+# Sitemap
 Sitemap: https://tecnatoangola.com/sitemap.xml
+
+# Host preference (canonical domain)
+Host: https://tecnatoangola.com
+
+# Crawl delay para bots agressivos (opcional)
+# Crawl-delay: 10

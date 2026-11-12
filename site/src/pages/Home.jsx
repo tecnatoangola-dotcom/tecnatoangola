@@ -42,6 +42,8 @@ export default function Home() {
     titulo: c.seoTitulo,
     descricao: c.seoDescricao,
     caminho: '/',
+    tipoPagina: 'home',
+    lang,
   })
   const conteudo = useConteudo()
   return (

@@ -426,6 +426,8 @@ export default function PoliticaPrivacidade() {
     titulo: c.seoTitulo,
     descricao: c.seoDescricao,
     caminho: '/politica-de-privacidade',
+    tipoPagina: 'politica-de-privacidade',
+    lang,
   })
 
   return (

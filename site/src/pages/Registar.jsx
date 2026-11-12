@@ -71,6 +71,8 @@ export default function Registar() {
     descricao: c.seoDescricao,
     caminho: '/registar',
     noindex: true,
+    tipoPagina: 'registar',
+    lang,
   })
 
   const { signUp } = useAuth()
