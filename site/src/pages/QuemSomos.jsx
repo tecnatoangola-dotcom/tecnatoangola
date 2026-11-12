@@ -95,6 +95,8 @@ export default function QuemSomos() {
     titulo: c.seoTitulo,
     descricao: c.seoDescricao,
     caminho: '/quem-somos',
+    tipoPagina: 'quem-somos',
+    lang,
   })
 
   const conteudo = useConteudo()

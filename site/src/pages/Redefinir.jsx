@@ -96,6 +96,8 @@ export default function Redefinir() {
     titulo: c.seoTitulo,
     caminho: '/redefinir',
     noindex: true,
+    tipoPagina: 'redefinir',
+    lang,
   })
 
   const { user, loading, updatePassword } = useAuth()

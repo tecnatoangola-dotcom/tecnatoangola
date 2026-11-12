@@ -82,6 +82,8 @@ export default function Confirmacao() {
     titulo: c.seoTitulo,
     caminho: '/confirmacao',
     noindex: true,
+    tipoPagina: 'confirmacao',
+    lang,
   })
 
   const { user, loading } = useAuth()

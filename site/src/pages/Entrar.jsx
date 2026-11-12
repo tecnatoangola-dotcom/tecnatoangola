@@ -47,6 +47,8 @@ export default function Entrar() {
     titulo: c.seoTitulo,
     caminho: '/entrar',
     noindex: true,
+    tipoPagina: 'entrar',
+    lang,
   })
 
   const { signIn } = useAuth()

@@ -19,6 +19,6 @@ export default function FaqPage() {
   const { lang } = useIdioma()
   const c = T[lang]
 
-  useSeo({ titulo: c.titulo, descricao: c.descricao, caminho: '/faq' })
+  useSeo({ titulo: c.titulo, descricao: c.descricao, caminho: '/faq', tipoPagina: 'faq', lang })
   return <Faq />
 }

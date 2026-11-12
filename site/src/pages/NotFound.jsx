@@ -36,6 +36,8 @@ export default function NotFound() {
     descricao: c.seoDescricao,
     caminho: '/404',
     noindex: true,
+    tipoPagina: 'home', // usa keywords da home para 404
+    lang,
   })
 
   return (

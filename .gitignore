@@ -12,10 +12,6 @@ dist
 dist-ssr
 *.local
 
-# Excecao: deploy-site/dist TEM de ser versionado (site ja compilado para o Netlify)
-!deploy-site/dist/
-!deploy-site/dist/**
-
 # Segredos / credenciais — nunca commitar
 .env
 .env.*
@@ -31,10 +27,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
-# Pastas de publicacao Netlify (contem guia com valores locais)
-/publicar/
-
-# Ficheiro local com segredos reais (Netlify env import) - nunca commitar
-/admin/netlify-env-import.txt
 

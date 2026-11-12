@@ -9,21 +9,31 @@
       name="description"
       content="TECNATO identifica, valoriza e dá visibilidade a talentos, projectos e iniciativas em Gestão, Administração, Ciência, Inovação, Empreendedorismo e Tecnologia. Candidata o teu projecto e representa o teu município. Luanda é o começo. Angola é o horizonte."
     />
-    <meta name="robots" content="index, follow" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
     <meta name="theme-color" content="#121313" />
     <link rel="canonical" href="https://tecnatoangola.com/" />
+
+    <!-- Palavras-chave estratégicas para relevância semântica -->
+    <meta name="keywords" content="TECNATO, tecnato angola, tecnatoangola, talento angola, inovação angola, empreendedorismo angola, projectos angola, startup angola, juventude angola, oportunidades angola, visibilidade talento, candidatura projeto angola, plataforma talento angola, apresentar projeto angola, financiamento projetos jovens angola, incubadora angola, gestão administração angola, ciência investigação angola, tecnologia inovação angola, impacto social angola, invenções angola" />
+
+    <!-- Internacionalização: hreflang para PT-AO e EN -->
+    <link rel="alternate" hreflang="pt-AO" href="https://tecnatoangola.com/" />
+    <link rel="alternate" hreflang="en" href="https://tecnatoangola.com/" />
+    <link rel="alternate" hreflang="x-default" href="https://tecnatoangola.com/" />
 
     <!-- App / PWA -->
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="apple-touch-icon" href="/logo/simbolo.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="mobile-web-app-capable" content="yes" />
 
     <!-- Open Graph (partilhas no Facebook, WhatsApp, LinkedIn...) -->
     <meta property="og:url" content="https://tecnatoangola.com/" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="TECNATO" />
     <meta property="og:locale" content="pt_AO" />
+    <meta property="og:locale:alternate" content="en_US" />
     <meta property="og:title" content="TECNATO — Talento, Oportunidade e Inovação em Angola" />
     <meta
       property="og:description"
@@ -39,19 +49,24 @@
 
     <!-- Twitter/X -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@tecnatoangola" />
+    <meta name="twitter:creator" content="@tecnatoangola" />
     <meta name="twitter:title" content="TECNATO — Talento, Oportunidade e Inovação em Angola" />
     <meta
       name="twitter:description"
       content="Apresenta o teu projecto, sê visto e representa o teu município. A plataforma que dá palco ao talento angolano."
     />
     <meta name="twitter:image" content="https://tecnatoangola.com/og-tecnato.png" />
+    <meta name="twitter:image:alt" content="TECNATO — identificar, valorizar e visibilizar o talento angolano" />
 
     <!-- Dados estruturados para o Google (rich results) -->
+    <!-- Organization -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "Organization",
         "name": "TECNATO",
+        "alternateName": "Tecnato Angola",
         "url": "https://tecnatoangola.com/",
         "logo": "https://tecnatoangola.com/logo/simbolo.png",
         "image": "https://tecnatoangola.com/og-tecnato.png",
@@ -63,16 +78,103 @@
           "addressLocality": "Luanda",
           "addressCountry": "AO"
         },
-        "sameAs": ["https://wa.me/244935073125"]
+        "sameAs": [
+          "https://wa.me/244935073125"
+        ],
+        "foundingDate": "2024",
+        "areaServed": "AO",
+        "knowsAbout": [
+          "Gestão e Administração",
+          "Ciência e Investigação",
+          "Tecnologia e Inovação",
+          "Empreendedorismo e Negócios",
+          "Impacto Social e Comunitário",
+          "Invenções e Criações Próprias"
+        ]
       }
     </script>
+
+    <!-- WebSite com SearchAction (sitelinks search box) -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
         "@type": "WebSite",
         "name": "TECNATO",
+        "alternateName": "Tecnato Angola",
         "url": "https://tecnatoangola.com/",
-        "inLanguage": "pt-AO"
+        "inLanguage": "pt-AO",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://tecnatoangola.com/?q={search_term_string}"
+          },
+          "query-input": "required name=search_term_string"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "TECNATO",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://tecnatoangola.com/logo/simbolo.png"
+          }
+        }
+      }
+    </script>
+
+    <!-- BreadcrumbList para a Home -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [{
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Início",
+          "item": "https://tecnatoangola.com/"
+        }]
+      }
+    </script>
+
+    <!-- FAQPage schema (preparado para a secção FAQ da Home) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "O que é o TECNATO?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "TECNATO é uma plataforma angolana de identificação, valorização e visibilidade de talentos, projectos e iniciativas nas áreas de Gestão, Administração, Ciência, Inovação, Empreendedorismo e Tecnologia."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Como posso candidatar o meu projecto ao TECNATO?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Podes candidatar o teu projecto através do formulário em tecnatoangola.com/candidatura, enviando um vídeo (até 3 min) e uma foto da equipa. Também podes enviar por WhatsApp."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Quem pode participar no TECNATO?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Qualquer equipa com um projecto nas áreas de Gestão, Administração, Ciência, Inovação, Empreendedorismo, Tecnologia, Impacto Social ou Invenções, que represente um município de Luanda."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "O TECNATO é uma incubadora ou aceleradora?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "O TECNATO é uma plataforma de visibilidade e identificação de talento. Não é uma incubadora tradicional, mas conecta projectos a oportunidades, parceiros e visibilidade."
+            }
+          }
+        ]
       }
     </script>
 

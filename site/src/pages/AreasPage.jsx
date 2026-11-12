@@ -19,6 +19,6 @@ export default function AreasPage() {
   const { lang } = useIdioma()
   const c = T[lang]
 
-  useSeo({ titulo: c.titulo, descricao: c.descricao, caminho: '/areas' })
+  useSeo({ titulo: c.titulo, descricao: c.descricao, caminho: '/areas', tipoPagina: 'areas', lang })
   return <Areas />
 }

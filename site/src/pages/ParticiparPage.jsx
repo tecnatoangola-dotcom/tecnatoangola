@@ -19,6 +19,6 @@ export default function ParticiparPage() {
   const { lang } = useIdioma()
   const c = T[lang]
 
-  useSeo({ titulo: c.titulo, descricao: c.descricao, caminho: '/participar' })
+  useSeo({ titulo: c.titulo, descricao: c.descricao, caminho: '/participar', tipoPagina: 'participar', lang })
   return <Participar />
 }

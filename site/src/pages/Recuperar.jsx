@@ -66,6 +66,8 @@ export default function Recuperar() {
     titulo: c.seoTitulo,
     caminho: '/recuperar',
     noindex: true,
+    tipoPagina: 'recuperar',
+    lang,
   })
 
   const { resetPassword } = useAuth()
